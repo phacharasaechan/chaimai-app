@@ -1,0 +1,255 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="stylesheet" href="css/styles.css">
+</head><body>
+<title>ChaiMai</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="fonts/fonts.css">
+
+<header class="top">
+  <div class="gut">
+    <div class="col">
+      <div class="appbar">
+        <div class="brand">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          <b data-i18n="appName">ChaiMai</b>
+        </div>
+        <div class="seg" role="group" aria-label="Language">
+          <button type="button" id="btnEn" class="active">EN</button>
+          <button type="button" id="btnTh">ไทย</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" role="tab" id="tabBtnUsb" data-tab="usb" aria-selected="true" aria-controls="panelUsb"><span data-i18n="tabUsb">Flash Drive</span></button>
+        <button type="button" class="tab" role="tab" id="tabBtnPower" data-tab="power" aria-selected="false" aria-controls="panelPower"><span data-i18n="tabPower">Power Bank</span></button>
+        <button type="button" class="tab" role="tab" id="tabBtnCharger" data-tab="charger" aria-selected="false" aria-controls="panelCharger"><span data-i18n="tabCharger">Charger</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="gut">
+  <div class="col">
+    <section class="hero">
+      <h1 class="title" id="heroTitle"></h1>
+      <p class="sub" id="heroSub"></p>
+      <div class="caseline" data-i18n="caseline">Pre-purchase sanity check · Not a lab test · Not legal advice</div>
+    </section>
+
+    <!-- ============ FLASH DRIVE ============ -->
+    <div class="panel active" id="panelUsb" role="tabpanel" aria-labelledby="tabBtnUsb">
+      <div class="sec-label" data-i18n="intakeLabel">Intake form</div>
+      <form class="card" id="intakeUsb" novalidate>
+        <div class="card-head">
+          <h2 data-i18n="cardTitleUsb">Listing details</h2>
+        </div>
+        <div class="grid">
+          <div class="tf" id="tfPriceUsb">
+            <label class="tf-label" for="priceUsb" data-i18n="lblPrice">Listed price</label>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="text" data-num autocomplete="off" id="priceUsb" inputmode="none" placeholder="199"></div>
+            <div class="tf-help" id="helpPriceUsb" hidden></div>
+          </div>
+          <div class="tf" id="tfCapacityUsb">
+            <label class="tf-label" for="capacityUsb" data-i18n="lblCapacity">Advertised capacity</label>
+            <div class="tf-row sel"><select id="capacityUsb"><option value="" data-i18n="selectPrompt">Select</option>
+              <option value="32">32 GB</option><option value="64">64 GB</option>
+              <option value="128">128 GB</option><option value="256">256 GB</option>
+              <option value="512">512 GB</option><option value="1024">1 TB</option>
+              <option value="2048">2 TB</option><option value="4096">4 TB</option>
+              <option value="8192">8 TB</option><option value="16384">16 TB</option>
+            </select></div>
+            <div class="tf-help" id="helpCapacityUsb" hidden></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="brandUsb" data-i18n="lblBrand">Brand on the listing</label>
+            <div class="tf-row sel"><select id="brandUsb"><option value="" data-i18n="selectPrompt">Select</option>
+              <option value="sandisk">SanDisk</option><option value="kingston">Kingston</option>
+              <option value="samsung">Samsung</option><option value="lexar">Lexar</option>
+              <option value="transcend">Transcend</option><option value="adata">ADATA</option>
+              <option value="hp">HP</option><option value="sony">Sony</option><option value="toshiba">Toshiba</option>
+              <option value="generic" data-i18n="brandGeneric">Generic / no-name</option>
+              <option value="other" data-i18n="brandOther">Other / unlisted brand</option>
+            </select></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="platformUsb" data-i18n="lblPlatform">Where you found it</label>
+            <div class="tf-row sel"><select id="platformUsb"></select></div>
+          </div>
+          <fieldset class="chips full" id="ratingUsbSet"></fieldset>
+          <fieldset class="chips full" id="ifaceUsbSet"></fieldset>
+        </div>
+        <button type="button" class="btn"><span data-i18n="runBtn">Run the check</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button>
+      </form>
+
+      <div class="pull-mount" id="mountUsb"></div>
+
+      <div class="evidence">
+        <div class="sec-label" data-i18n="evidenceLabel">Case notes — read before you buy</div>
+        <details><summary data-i18n="d1sum">How sellers fake the capacity</summary><div class="body" data-i18n-html="d1body"></div></details>
+        <details><summary data-i18n="d2sum">Brand red flags</summary><div class="body" data-i18n-html="d2body"></div></details>
+        <details><summary data-i18n="d3sum">Quick sanity checks before you tap "buy"</summary><div class="body" data-i18n-html="d3body"></div></details>
+        <details><summary data-i18n="d4sum">What this tool can't tell you</summary><div class="body" data-i18n-html="d4body"></div></details>
+      </div>
+      <div class="kicker" data-i18n="kickerUsb"></div>
+    </div>
+
+    <!-- ============ POWER BANK ============ -->
+    <div class="panel" id="panelPower" role="tabpanel" aria-labelledby="tabBtnPower" hidden>
+      <div class="sec-label" data-i18n="intakeLabel">Intake form</div>
+      <form class="card" id="intakePower" novalidate>
+        <div class="card-head">
+          <h2 data-i18n="cardTitlePower">Listing details</h2>
+        </div>
+        <div class="grid">
+          <div class="tf" id="tfPricePower">
+            <label class="tf-label" for="pricePower" data-i18n="lblPrice">Listed price</label>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="text" data-num autocomplete="off" id="pricePower" inputmode="none" placeholder="299"></div>
+            <div class="tf-help" id="helpPricePower" hidden></div>
+          </div>
+          <div class="tf" id="tfCapacityPower">
+            <label class="tf-label" for="capacityPower" data-i18n="lblCapacityMah">Advertised capacity (mAh)</label>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="capacityPower" inputmode="none" placeholder="30000"><span class="tf-aff">mAh</span></div>
+            <div class="tf-help" id="helpCapacityPower" hidden></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="marketingWatt" data-i18n="lblMarketingW">Big bold wattage on the box/listing</label>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="marketingWatt" inputmode="none" placeholder="45"><span class="tf-aff">W</span></div>
+            <div class="tf-help" data-i18n="hintMarketingW"></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="regVoltage" data-i18n="lblRegLabel">Regulatory label output rating</label>
+            <div class="tf-row">
+              <input type="text" data-num autocomplete="off" id="regVoltage" inputmode="none" placeholder="5" aria-label="Volts">
+              <span class="tf-aff">V ×</span>
+              <input type="text" data-num autocomplete="off" id="regCurrent" inputmode="none" placeholder="1.8" aria-label="Amps">
+              <span class="tf-aff">A</span>
+              <span class="calc" id="regCalc" aria-live="polite" hidden></span>
+            </div>
+            <div class="tf-help" data-i18n="hintRegLabel"></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="brandPower" data-i18n="lblBrand">Brand on the listing</label>
+            <div class="tf-row sel"><select id="brandPower"><option value="" data-i18n="selectPrompt">Select</option>
+              <option value="anker">Anker</option><option value="xiaomi">Xiaomi</option>
+              <option value="baseus">Baseus</option><option value="romoss">Romoss</option>
+              <option value="ugreen">UGREEN</option><option value="hp">HP</option>
+              <option value="generic" data-i18n="brandGeneric">Generic / no-name</option>
+              <option value="other" data-i18n="brandOther">Other / unlisted brand</option>
+            </select></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="platformPower" data-i18n="lblPlatform">Where you found it</label>
+            <div class="tf-row sel"><select id="platformPower"></select></div>
+          </div>
+          <fieldset class="chips full" id="ratingPowerSet"></fieldset>
+        </div>
+        <button type="button" class="btn"><span data-i18n="runBtn">Run the check</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button>
+      </form>
+
+      <div class="pull-mount" id="mountPower"></div>
+
+      <div class="evidence">
+        <div class="sec-label" data-i18n="evidenceLabel">Case notes — read before you buy</div>
+        <details><summary data-i18n="p1sum">Marketing wattage vs. the regulatory label</summary><div class="body" data-i18n-html="p1body"></div></details>
+        <details><summary data-i18n="p2sum">Why the mAh number lies too</summary><div class="body" data-i18n-html="p2body"></div></details>
+        <details><summary data-i18n="p3sum">Where to actually find the regulatory label</summary><div class="body" data-i18n-html="p3body"></div></details>
+        <details><summary data-i18n="p4sum">What this tool can't tell you</summary><div class="body" data-i18n-html="p4body"></div></details>
+      </div>
+      <div class="kicker" data-i18n="kickerPower"></div>
+    </div>
+
+    <!-- ============ CHARGER ============ -->
+    <div class="panel" id="panelCharger" role="tabpanel" aria-labelledby="tabBtnCharger" hidden>
+      <div class="sec-label" data-i18n="intakeLabel">Intake form</div>
+      <form class="card" id="intakeCharger" novalidate>
+        <div class="card-head">
+          <h2 data-i18n="cardTitleCharger">Listing details</h2>
+        </div>
+        <div class="grid">
+          <div class="tf" id="tfPriceCharger">
+            <label class="tf-label" for="priceCharger" data-i18n="lblPrice">Listed price</label>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="text" data-num autocomplete="off" id="priceCharger" inputmode="none" placeholder="590"></div>
+            <div class="tf-help" id="helpPriceCharger" hidden></div>
+          </div>
+          <div class="tf" id="tfWattCharger">
+            <label class="tf-label" for="wattCharger" data-i18n="lblMarketingW">Big bold wattage on the box/listing</label>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="wattCharger" inputmode="none" placeholder="65"><span class="tf-aff">W</span></div>
+            <div class="tf-help" id="helpWattCharger" data-i18n="hintMarketingWc"></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="regVoltageC" data-i18n="lblRegMax">Highest output step on the label</label>
+            <div class="tf-row">
+              <input type="text" data-num autocomplete="off" id="regVoltageC" inputmode="none" placeholder="20" aria-label="Volts">
+              <span class="tf-aff">V ×</span>
+              <input type="text" data-num autocomplete="off" id="regCurrentC" inputmode="none" placeholder="3.25" aria-label="Amps">
+              <span class="tf-aff">A</span>
+              <span class="calc" id="regCalcC" aria-live="polite" hidden></span>
+            </div>
+            <div class="tf-help" data-i18n="hintRegMax"></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="weightCharger" data-i18n="lblWeight">Weight (optional)</label>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="weightCharger" inputmode="none" placeholder="110"><span class="tf-aff">g</span></div>
+            <div class="tf-help" data-i18n="hintWeight"></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="brandCharger" data-i18n="lblBrand">Brand on the listing</label>
+            <div class="tf-row sel"><select id="brandCharger"><option value="" data-i18n="selectPrompt">Select</option>
+              <option value="apple">Apple</option><option value="samsung">Samsung</option>
+              <option value="anker">Anker</option><option value="baseus">Baseus</option>
+              <option value="ugreen">UGREEN</option><option value="xiaomi">Xiaomi</option>
+              <option value="belkin">Belkin</option>
+              <option value="generic" data-i18n="brandGeneric">Generic / no-name</option>
+              <option value="other" data-i18n="brandOther">Other / unlisted brand</option>
+            </select></div>
+          </div>
+          <div class="tf">
+            <label class="tf-label" for="platformCharger" data-i18n="lblPlatform">Where you found it</label>
+            <div class="tf-row sel"><select id="platformCharger"></select></div>
+          </div>
+          <fieldset class="chips full" id="stepsChargerSet"></fieldset>
+          <fieldset class="chips full" id="ratingChargerSet"></fieldset>
+        </div>
+        <button type="button" class="btn"><span data-i18n="runBtn">Run the check</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button>
+      </form>
+
+      <div class="pull-mount" id="mountCharger"></div>
+
+      <div class="evidence">
+        <div class="sec-label" data-i18n="evidenceLabel">Read before you buy</div>
+        <details><summary data-i18n="c1sum"></summary><div class="body" data-i18n-html="c1body"></div></details>
+        <details><summary data-i18n="c2sum"></summary><div class="body" data-i18n-html="c2body"></div></details>
+        <details><summary data-i18n="c3sum"></summary><div class="body" data-i18n-html="c3body"></div></details>
+        <details><summary data-i18n="c4sum"></summary><div class="body" data-i18n-html="c4body"></div></details>
+      </div>
+      <div class="kicker" data-i18n="kickerCharger"></div>
+    </div>
+
+    <footer data-i18n-html="footerBody"></footer>
+  </div>
+</main>
+
+
+
+<div id="keypad" class="keypad" role="group" aria-label="Number keypad" hidden>
+  <button type="button" class="kp-key" data-k="1">1</button>
+  <button type="button" class="kp-key" data-k="2">2</button>
+  <button type="button" class="kp-key" data-k="3">3</button>
+  <button type="button" class="kp-key kp-fn" data-k="del" aria-label="Backspace"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg></button>
+  <button type="button" class="kp-key" data-k="4">4</button>
+  <button type="button" class="kp-key" data-k="5">5</button>
+  <button type="button" class="kp-key" data-k="6">6</button>
+  <button type="button" class="kp-key kp-go" data-k="next"><span id="kpNext" data-i18n="kpNext">Next</span><span id="kpDone" data-i18n="kpDone" hidden>Done</span></button>
+  <button type="button" class="kp-key" data-k="7">7</button>
+  <button type="button" class="kp-key" data-k="8">8</button>
+  <button type="button" class="kp-key" data-k="9">9</button>
+  <button type="button" class="kp-key" data-k=".">.</button>
+  <button type="button" class="kp-key" data-k="0">0</button>
+  <button type="button" class="kp-key" data-k="00">00</button>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/prices.js"></script>
+<script src="js/app.js"></script>
+<script src="js/keypad.js"></script>
+
+</body></html>

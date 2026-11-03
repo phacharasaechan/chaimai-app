@@ -663,17 +663,34 @@ function showTab(tab){
   });
   heroFor(tab);
 }
+/* Tab switch: the viewport slides sideways (direction follows tab order) using the View Transitions API.
+   The sticky header is held still so only the content moves. Browsers without it just switch instantly. */
+var TABORDER=['usb','power','charger'], vtId=0;
+function switchTab(tab){
+  if(tab===currentTab) return;
+  var dir=TABORDER.indexOf(tab)-TABORDER.indexOf(currentTab);
+  function run(){ showTab(tab); window.scrollTo(0,0); }
+  if(!document.startViewTransition || reduce.matches){ run(); return; }
+  var root=document.documentElement, id=++vtId;
+  root.dataset.slide=dir>0?'next':'prev';
+  root.classList.add('vt');
+  var vt=document.startViewTransition(run);
+  vt.finished.then(function(){},function(){}).then(function(){
+    if(id!==vtId) return;
+    root.classList.remove('vt'); delete root.dataset.slide;
+  });
+}
 document.querySelectorAll('.tab').forEach(function(b){
   b.addEventListener('click',function(){
     var tab=b.getAttribute('data-tab');
-    location.hash=HASHOF[tab];
-    showTab(tab);
-    window.scrollTo({top:0,behavior:'smooth'});
+    if(tab===currentTab) return;
+    if(location.hash==='#'+HASHOF[tab]) switchTab(tab);   /* hashchange won't fire */
+    else location.hash=HASHOF[tab];                       /* hashchange -> switchTab (also covers Back) */
   });
 });
 window.addEventListener('hashchange',function(){
   var tab=HASH[location.hash.replace('#','')];
-  if(tab && tab!==currentTab) showTab(tab);
+  if(tab && tab!==currentTab) switchTab(tab);
 });
 
 /* ---------------- first state: blank form, verdict drawers empty ---------------- */

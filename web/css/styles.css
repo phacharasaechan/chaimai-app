@@ -71,20 +71,18 @@
   }
   .seg button + button{ border-left:1px solid var(--outline); }
   .seg button.active{ background:var(--pri-c); color:var(--on-pri-c); }
-  .tabs{ display:flex; }
+  .tabs{ display:flex; position:relative; }
   .tab{
     flex:1; height:48px; border:0; background:none; padding:0; cursor:pointer;
     color:var(--on-v); font-size:14px; font-weight:500; letter-spacing:.02em;
     display:flex; justify-content:center; align-items:stretch;
   }
   .tab span{ position:relative; display:flex; align-items:center; padding:0 6px; }
-  .tab span::after{
-    content:""; position:absolute; left:0; right:0; bottom:0; height:3px;
-    border-radius:3px 3px 0 0; background:var(--pri);
-    transform:scaleY(0); transform-origin:bottom; transition:transform .25s var(--ease);
-  }
   .tab[aria-selected="true"]{ color:var(--pri); }
-  .tab[aria-selected="true"] span::after{ transform:scaleY(1); }
+  .tab-ind{
+    position:absolute; left:0; bottom:0; height:3px; width:0; border-radius:3px 3px 0 0; background:var(--pri);
+    transition:transform .34s var(--ease), width .34s var(--ease); will-change:transform,width; pointer-events:none;
+  }
 
   /* ---------- hero ---------- */
   .hero{ padding-block:32px 4px; }
@@ -102,7 +100,6 @@
     font:500 12px var(--f-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--pri);
     margin:34px 0 12px;
   }
-  .panel.active{ animation:fade .35s var(--ease) both; }
   @keyframes fade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
 
   /* ---------- form ---------- */
@@ -320,3 +317,47 @@
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{ animation-duration:.01ms !important; animation-delay:0s !important; transition-duration:.01ms !important; transition-delay:0s !important; }
   }
+
+  /* ---------- custom numeric keypad ---------- */
+  .tf input[data-num]{ font-family:var(--f-mono); font-size:15px; }
+  .keypad{
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    display:grid; grid-template-columns:repeat(3,1fr) 1.15fr; grid-template-rows:repeat(4,56px); gap:8px;
+    padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
+    background:var(--surf); border-top:1px solid var(--outline-v);
+    box-shadow:0 -6px 24px rgba(0,0,0,.10);
+    -webkit-user-select:none; user-select:none; touch-action:manipulation;
+    transform:translateY(105%); visibility:hidden;
+    transition:transform .26s var(--ease), visibility 0s linear .26s;   /* slides down, then un-renders */
+  }
+  .keypad.open{ transform:none; visibility:visible; transition:transform .26s var(--ease), visibility 0s; }
+  .kp-key{
+    border:0; border-radius:14px; background:var(--surf-hi); color:var(--on);
+    font:500 22px var(--f-mono); display:flex; align-items:center; justify-content:center;
+    -webkit-tap-highlight-color:transparent; cursor:pointer; transition:background .12s, transform .08s;
+  }
+  .kp-key:active{ background:var(--outline-v); transform:scale(.97); }
+  .kp-key svg{ width:26px; height:26px; fill:currentColor; }
+  .kp-fn{ background:var(--pri-c); color:var(--on-pri-c); }
+  .kp-go{ grid-row:span 3; background:var(--pri); color:var(--on-pri); font:600 17px var(--f-body); }
+  .kp-go:active{ filter:brightness(.92); background:var(--pri); }
+  body{ transition:padding-bottom .26s var(--ease); }
+  body.kp-open{ padding-bottom:calc(var(--kp-h,0px) + 16px); }
+  @media (prefers-reduced-motion: reduce){ .keypad, body, .tab-ind{ transition:none; } }
+  button, .tab, .chip, summary, .tf{ -webkit-tap-highlight-color:transparent; }
+
+  /* ---------- tab switch: viewport slides, header + keypad stay put ---------- */
+  html.vt .top{ view-transition-name:hdr; }
+  html.vt .keypad{ view-transition-name:kp; }
+  ::view-transition-group(hdr), ::view-transition-group(kp){ animation:none; }
+  ::view-transition-old(hdr), ::view-transition-old(kp){ display:none; }       /* live copy only, so the bar can slide */
+  ::view-transition-new(hdr), ::view-transition-new(kp){ animation:none; }
+  ::view-transition-old(root), ::view-transition-new(root){ animation-duration:.34s; animation-timing-function:cubic-bezier(.2,0,0,1); animation-fill-mode:both; mix-blend-mode:normal; }
+  html[data-slide="next"]::view-transition-old(root){ animation-name:vt-out-left; }
+  html[data-slide="next"]::view-transition-new(root){ animation-name:vt-in-right; }
+  html[data-slide="prev"]::view-transition-old(root){ animation-name:vt-out-right; }
+  html[data-slide="prev"]::view-transition-new(root){ animation-name:vt-in-left; }
+  @keyframes vt-out-left{ to{ transform:translateX(-100%); } }
+  @keyframes vt-in-right{ from{ transform:translateX(100%); } }
+  @keyframes vt-out-right{ to{ transform:translateX(100%); } }
+  @keyframes vt-in-left{ from{ transform:translateX(-100%); } }

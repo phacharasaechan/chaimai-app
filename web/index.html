@@ -3,9 +3,7 @@
 </head><body>
 <title>ChaiMai</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/fonts.css">
 
 <header class="top">
   <div class="gut">
@@ -47,7 +45,7 @@
         <div class="grid">
           <div class="tf" id="tfPriceUsb">
             <label class="tf-label" for="priceUsb" data-i18n="lblPrice">Listed price</label>
-            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="priceUsb" inputmode="decimal" placeholder="199" min="0" step="1"></div>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="text" data-num autocomplete="off" id="priceUsb" inputmode="none" placeholder="199"></div>
             <div class="tf-help" id="helpPriceUsb" hidden></div>
           </div>
           <div class="tf" id="tfCapacityUsb">
@@ -104,25 +102,25 @@
         <div class="grid">
           <div class="tf" id="tfPricePower">
             <label class="tf-label" for="pricePower" data-i18n="lblPrice">Listed price</label>
-            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="pricePower" inputmode="decimal" placeholder="299" min="0" step="1"></div>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="text" data-num autocomplete="off" id="pricePower" inputmode="none" placeholder="299"></div>
             <div class="tf-help" id="helpPricePower" hidden></div>
           </div>
           <div class="tf" id="tfCapacityPower">
             <label class="tf-label" for="capacityPower" data-i18n="lblCapacityMah">Advertised capacity (mAh)</label>
-            <div class="tf-row"><input type="number" id="capacityPower" inputmode="numeric" placeholder="30000" min="0" step="1000"><span class="tf-aff">mAh</span></div>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="capacityPower" inputmode="none" placeholder="30000"><span class="tf-aff">mAh</span></div>
             <div class="tf-help" id="helpCapacityPower" hidden></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="marketingWatt" data-i18n="lblMarketingW">Big bold wattage on the box/listing</label>
-            <div class="tf-row"><input type="number" id="marketingWatt" inputmode="decimal" placeholder="45" min="0" step="1"><span class="tf-aff">W</span></div>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="marketingWatt" inputmode="none" placeholder="45"><span class="tf-aff">W</span></div>
             <div class="tf-help" data-i18n="hintMarketingW"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="regVoltage" data-i18n="lblRegLabel">Regulatory label output rating</label>
             <div class="tf-row">
-              <input type="number" id="regVoltage" inputmode="decimal" placeholder="5" min="0" step="0.1" aria-label="Volts">
+              <input type="text" data-num autocomplete="off" id="regVoltage" inputmode="none" placeholder="5" aria-label="Volts">
               <span class="tf-aff">V ×</span>
-              <input type="number" id="regCurrent" inputmode="decimal" placeholder="1.8" min="0" step="0.1" aria-label="Amps">
+              <input type="text" data-num autocomplete="off" id="regCurrent" inputmode="none" placeholder="1.8" aria-label="Amps">
               <span class="tf-aff">A</span>
               <span class="calc" id="regCalc" aria-live="polite" hidden></span>
             </div>
@@ -169,20 +167,20 @@
         <div class="grid">
           <div class="tf" id="tfPriceCharger">
             <label class="tf-label" for="priceCharger" data-i18n="lblPrice">Listed price</label>
-            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="priceCharger" inputmode="decimal" placeholder="590" min="0" step="1"></div>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="text" data-num autocomplete="off" id="priceCharger" inputmode="none" placeholder="590"></div>
             <div class="tf-help" id="helpPriceCharger" hidden></div>
           </div>
           <div class="tf" id="tfWattCharger">
             <label class="tf-label" for="wattCharger" data-i18n="lblMarketingW">Big bold wattage on the box/listing</label>
-            <div class="tf-row"><input type="number" id="wattCharger" inputmode="decimal" placeholder="65" min="0" step="1"><span class="tf-aff">W</span></div>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="wattCharger" inputmode="none" placeholder="65"><span class="tf-aff">W</span></div>
             <div class="tf-help" id="helpWattCharger" data-i18n="hintMarketingWc"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="regVoltageC" data-i18n="lblRegMax">Highest output step on the label</label>
             <div class="tf-row">
-              <input type="number" id="regVoltageC" inputmode="decimal" placeholder="20" min="0" step="0.1" aria-label="Volts">
+              <input type="text" data-num autocomplete="off" id="regVoltageC" inputmode="none" placeholder="20" aria-label="Volts">
               <span class="tf-aff">V ×</span>
-              <input type="number" id="regCurrentC" inputmode="decimal" placeholder="3.25" min="0" step="0.01" aria-label="Amps">
+              <input type="text" data-num autocomplete="off" id="regCurrentC" inputmode="none" placeholder="3.25" aria-label="Amps">
               <span class="tf-aff">A</span>
               <span class="calc" id="regCalcC" aria-live="polite" hidden></span>
             </div>
@@ -190,7 +188,7 @@
           </div>
           <div class="tf">
             <label class="tf-label" for="weightCharger" data-i18n="lblWeight">Weight (optional)</label>
-            <div class="tf-row"><input type="number" id="weightCharger" inputmode="decimal" placeholder="110" min="0" step="1"><span class="tf-aff">g</span></div>
+            <div class="tf-row"><input type="text" data-num autocomplete="off" id="weightCharger" inputmode="none" placeholder="110"><span class="tf-aff">g</span></div>
             <div class="tf-help" data-i18n="hintWeight"></div>
           </div>
           <div class="tf">
@@ -231,8 +229,28 @@
 </main>
 
 
+
+<div id="keypad" class="keypad" role="group" aria-label="Number keypad" aria-hidden="true">
+  <button type="button" class="kp-key" data-k="1">1</button>
+  <button type="button" class="kp-key" data-k="2">2</button>
+  <button type="button" class="kp-key" data-k="3">3</button>
+  <button type="button" class="kp-key kp-fn" data-k="del" aria-label="Backspace"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg></button>
+  <button type="button" class="kp-key" data-k="4">4</button>
+  <button type="button" class="kp-key" data-k="5">5</button>
+  <button type="button" class="kp-key" data-k="6">6</button>
+  <button type="button" class="kp-key kp-go" data-k="next"><span id="kpNext" data-i18n="kpNext">Next</span><span id="kpDone" data-i18n="kpDone" hidden>Done</span></button>
+  <button type="button" class="kp-key" data-k="7">7</button>
+  <button type="button" class="kp-key" data-k="8">8</button>
+  <button type="button" class="kp-key" data-k="9">9</button>
+  <button type="button" class="kp-key" data-k=".">.</button>
+  <button type="button" class="kp-key" data-k="0">0</button>
+  <button type="button" class="kp-key" data-k="00">00</button>
+</div>
+
 <script src="js/i18n.js"></script>
 <script src="js/prices.js"></script>
 <script src="js/app.js"></script>
+<script src="js/keypad.js"></script>
+<script src="js/tabs.js"></script>
 
 </body></html>
