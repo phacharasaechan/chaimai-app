@@ -31,7 +31,7 @@ jobs:
       - name: ประกอบแอป
         run: |
           gradle assembleRelease --no-daemon \
-            -Pandroid.injected.signing.store.file=release.jks \
+            -Pandroid.injected.signing.store.file="$PWD/release.jks" \
             -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_PASSWORD }}" \
             -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
             -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}"
