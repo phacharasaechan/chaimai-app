@@ -1,331 +1,11 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="stylesheet" href="css/styles.css">
+</head><body>
 <title>ChaiMai</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  /* Layout: sticky app bar + primary tabs, left-aligned hero, tonal form card,
-     and a sealed verdict drawer that unrolls when its pull tab is dragged down. */
-  :root{
-    --bg:#F4FAF7; --surf:#E9F1EE; --surf-hi:#DAE4E0;
-    --on:#171D1B; --on-v:#3F4945; --outline:#6F7975; --outline-v:#BFC9C4;
-    --pri:#00695C; --on-pri:#FFFFFF; --pri-c:#B0F0E2; --on-pri-c:#00201B;
-    --bad:#B3261E; --bad-on:#FFFFFF; --bad-c:#FFDAD6; --on-bad-c:#410002;
-    --warn:#8A5100; --warn-on:#FFFFFF; --warn-c:#FFDDB3; --on-warn-c:#2C1600;
-    --ok:#1B6C37; --ok-on:#FFFFFF; --ok-c:#BFF0C9; --on-ok-c:#00210B;
-    --glass:rgba(255,255,255,.58); --glass-2:rgba(0,0,0,.09); --menu:#FBFDFC;
-    --f-body:'Roboto Flex','Noto Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif;
-    --f-mono:'Roboto Mono',ui-monospace,Menlo,monospace;
-    --ease:cubic-bezier(.2,0,0,1);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#0E1513; --surf:#18201E; --surf-hi:#262E2C;
-      --on:#DEE4E1; --on-v:#BFC9C4; --outline:#89938F; --outline-v:#3F4945;
-      --pri:#7FD6C8; --on-pri:#003731; --pri-c:#005047; --on-pri-c:#A0F2E3;
-      --bad:#FFB4AB; --bad-on:#690005; --bad-c:#7A1B14; --on-bad-c:#FFDAD6;
-      --warn:#F2BE6B; --warn-on:#472B00; --warn-c:#5A3700; --on-warn-c:#FFDDB3;
-      --ok:#8DD9A0; --ok-on:#00391A; --ok-c:#0F4D26; --on-ok-c:#BFF0C9;
-      --glass:rgba(0,0,0,.28); --glass-2:rgba(255,255,255,.12); --menu:#2A3331;
-      color-scheme:dark;
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#0E1513; --surf:#18201E; --surf-hi:#262E2C;
-    --on:#DEE4E1; --on-v:#BFC9C4; --outline:#89938F; --outline-v:#3F4945;
-    --pri:#7FD6C8; --on-pri:#003731; --pri-c:#005047; --on-pri-c:#A0F2E3;
-    --bad:#FFB4AB; --bad-on:#690005; --bad-c:#7A1B14; --on-bad-c:#FFDAD6;
-    --warn:#F2BE6B; --warn-on:#472B00; --warn-c:#5A3700; --on-warn-c:#FFDDB3;
-    --ok:#8DD9A0; --ok-on:#00391A; --ok-c:#0F4D26; --on-ok-c:#BFF0C9;
-    --glass:rgba(0,0,0,.28); --glass-2:rgba(255,255,255,.12); --menu:#2A3331;
-    color-scheme:dark;
-  }
-
-  *{box-sizing:border-box;}
-  body{
-    background:var(--bg); color:var(--on);
-    font-family:var(--f-body); font-size:15px; line-height:1.5;
-    -webkit-font-smoothing:antialiased; min-height:100%;
-  }
-  body.lang-th{ font-family:'Noto Sans Thai','Roboto Flex',system-ui,sans-serif; }
-  body::before{
-    content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px);
-    z-index:10; background:var(--bg);
-  }
-  .gut{
-    padding-left:max(16px,env(safe-area-inset-left,0px));
-    padding-right:max(16px,env(safe-area-inset-right,0px));
-  }
-  .col{ width:100%; max-width:720px; margin:0 auto; }
-  button{ font-family:inherit; }
-  :focus-visible{ outline:2px solid var(--pri); outline-offset:2px; }
-
-  /* ---------- header ---------- */
-  .top{
-    position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
-    background:var(--bg); border-bottom:1px solid var(--outline-v);
-  }
-  .appbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; height:60px; }
-  .brand{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .brand svg{ width:24px; height:24px; fill:var(--pri); flex:none; }
-  .brand b{ font-size:19px; font-weight:600; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .seg{ display:flex; flex:none; border:1px solid var(--outline); border-radius:20px; overflow:hidden; }
-  .seg button{
-    border:0; background:transparent; color:var(--on-v); cursor:pointer;
-    height:34px; min-width:48px; padding:0 14px; font-size:13px; font-weight:500; letter-spacing:.03em;
-    transition:background .2s,color .2s;
-  }
-  .seg button + button{ border-left:1px solid var(--outline); }
-  .seg button.active{ background:var(--pri-c); color:var(--on-pri-c); }
-  .tabs{ display:flex; }
-  .tab{
-    flex:1; height:48px; border:0; background:none; padding:0; cursor:pointer;
-    color:var(--on-v); font-size:14px; font-weight:500; letter-spacing:.02em;
-    display:flex; justify-content:center; align-items:stretch;
-  }
-  .tab span{ position:relative; display:flex; align-items:center; padding:0 6px; }
-  .tab span::after{
-    content:""; position:absolute; left:0; right:0; bottom:0; height:3px;
-    border-radius:3px 3px 0 0; background:var(--pri);
-    transform:scaleY(0); transform-origin:bottom; transition:transform .25s var(--ease);
-  }
-  .tab[aria-selected="true"]{ color:var(--pri); }
-  .tab[aria-selected="true"] span::after{ transform:scaleY(1); }
-
-  /* ---------- hero ---------- */
-  .hero{ padding-block:32px 4px; }
-  h1.title{
-    font-size:clamp(30px,7.4vw,46px); line-height:1.1; font-weight:700; letter-spacing:-.02em;
-    margin:0 0 12px; text-wrap:balance;
-  }
-  body.lang-th h1.title{ letter-spacing:0; line-height:1.3; }
-  h1.title .strike{ text-decoration:line-through; text-decoration-color:var(--bad); text-decoration-thickness:.09em; }
-  p.sub{ margin:0; max-width:56ch; color:var(--on-v); font-size:16px; line-height:1.6; }
-  p.sub b{ color:var(--on); font-weight:600; }
-  .caseline{ margin-top:14px; font:400 11px var(--f-mono); letter-spacing:.06em; color:var(--outline); text-transform:uppercase; }
-
-  .sec-label{
-    font:500 12px var(--f-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--pri);
-    margin:34px 0 12px;
-  }
-  .panel.active{ animation:fade .35s var(--ease) both; }
-  @keyframes fade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
-
-  /* ---------- form ---------- */
-  .card{ background:var(--surf); border-radius:28px; padding:24px; }
-  .card-head{ display:flex; justify-content:space-between; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:20px; }
-  .card-head h2{ margin:0; font-size:20px; font-weight:600; letter-spacing:-.005em; }
-  .ex{ font-size:12px; padding:4px 10px; border-radius:8px; border:1px solid var(--outline-v); color:var(--on-v); transition:opacity .3s; }
-  .ex.gone{ opacity:0; pointer-events:none; }
-  .grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
-  .full{ grid-column:1 / -1; }
-  @media (max-width:560px){ .grid{ grid-template-columns:minmax(0,1fr); } .card{ padding:20px 16px; } }
-
-  .tf{
-    position:relative; display:flex; flex-direction:column; gap:1px; min-width:0;
-    background:var(--surf-hi); border-radius:12px 12px 4px 4px; padding:9px 16px 0;
-    border-bottom:1px solid var(--on-v); transition:background .2s;
-  }
-  .tf::after{
-    content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--pri);
-    transform:scaleX(0); transition:transform .25s var(--ease);
-  }
-  .tf:focus-within::after{ transform:scaleX(1); }
-  .tf-label{ font-size:12px; letter-spacing:.04em; color:var(--on-v); transition:color .2s; }
-  .tf:focus-within .tf-label{ color:var(--pri); }
-  .tf-row{ display:flex; align-items:center; gap:8px; min-height:38px; }
-  .tf-aff{ font-family:var(--f-mono); color:var(--on-v); font-size:14px; flex:none; }
-  .tf input, .tf select{
-    font:inherit; font-size:16px; color:var(--on); background:transparent; border:0; outline:0; border-radius:0;
-    width:100%; min-width:0; padding:4px 0 10px; appearance:none; -webkit-appearance:none;
-  }
-  .tf input[type=number]{ -moz-appearance:textfield; font-family:var(--f-mono); font-size:15px; }
-  .tf input::-webkit-outer-spin-button, .tf input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
-  .tf input::placeholder{ color:var(--outline); opacity:.8; }
-  .sel{ position:relative; }
-  .sel::after{
-    content:""; position:absolute; right:2px; top:50%; width:8px; height:8px; margin-top:-7px;
-    border-right:2px solid var(--on-v); border-bottom:2px solid var(--on-v);
-    transform:rotate(45deg); pointer-events:none; transition:transform .3s var(--ease), margin-top .3s var(--ease);
-  }
-  .sel select{ padding-right:26px; text-overflow:ellipsis; }
-  .sel.open::after{ transform:rotate(225deg); margin-top:-1px; }
-  .sel select.native{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; padding:0; margin:0; }
-  .dd-btn{
-    display:block; width:100%; min-width:0; padding:4px 26px 10px 0; margin:0; border:0; background:transparent;
-    font:inherit; font-size:16px; line-height:1.5; color:var(--on); text-align:left; cursor:pointer; outline:none;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .dd-menu{
-    position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:15;
-    margin:0; padding:8px 0; list-style:none; max-height:320px; overflow-y:auto; overscroll-behavior:contain;
-    background:var(--menu); color:var(--on); border-radius:12px;
-    box-shadow:0 1px 3px rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);
-    opacity:0; visibility:hidden; transform:scaleY(.82) translateY(-6px); transform-origin:top center;
-    transition:opacity .18s ease, transform .26s var(--ease), visibility 0s linear .26s;
-  }
-  .dd-menu.up{ top:auto; bottom:calc(100% + 6px); transform-origin:bottom center; transform:scaleY(.82) translateY(6px); }
-  .dd-menu.show{ opacity:1; visibility:visible; transform:none; transition:opacity .18s ease, transform .26s var(--ease), visibility 0s; }
-  .dd-item{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    min-height:48px; padding:10px 16px; font-size:15px; line-height:1.35; cursor:pointer;
-    transition:background-color .15s;
-  }
-  .dd-item svg{ width:20px; height:20px; fill:currentColor; flex:none; opacity:0; }
-  .dd-item:hover, .dd-item.act{ background:var(--glass-2); }
-  .dd-item[aria-selected="true"]{ background:var(--pri-c); color:var(--on-pri-c); }
-  .dd-item[aria-selected="true"] svg{ opacity:1; }
-  .dd-item[aria-selected="true"].act{ box-shadow:inset 0 0 0 2px var(--pri); }
-  .dd-menu.show .dd-item{ animation:ddIn .3s var(--ease) both; animation-delay:calc(min(var(--i),8) * 22ms); }
-  @keyframes ddIn{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
-  .tf-help{ font-size:12px; line-height:1.45; color:var(--on-v); padding:0 0 9px; }
-  .tf.err{ border-bottom-color:var(--bad); }
-  .tf.err .tf-label, .tf.err .tf-help{ color:var(--bad); }
-  .tf.err::after{ background:var(--bad); transform:scaleX(1); }
-  .calc{
-    flex:none; font:500 12px var(--f-mono); padding:3px 8px; border-radius:8px;
-    background:var(--pri-c); color:var(--on-pri-c); white-space:nowrap;
-  }
-
-  fieldset.chips{ border:0; margin:0; padding:0; min-width:0; }
-  fieldset.chips legend{ font-size:12px; letter-spacing:.04em; color:var(--on-v); padding:0; margin-bottom:8px; }
-  .chip-set{ display:flex; flex-wrap:wrap; gap:8px; }
-  .chip{ position:relative; display:inline-flex; max-width:100%; }
-  .chip input{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
-  .chip-face{
-    display:inline-flex; align-items:center; min-height:36px; padding:0 14px; border-radius:8px;
-    border:1px solid var(--outline); color:var(--on-v); font-size:14px; line-height:1.25;
-    transition:background .2s,color .2s,border-color .2s;
-  }
-  .chip-face::before{ content:"\2713"; width:0; overflow:hidden; opacity:0; margin-right:0; font-size:13px; transition:width .2s,margin .2s,opacity .2s; }
-  .chip input:checked + .chip-face{ background:var(--pri-c); color:var(--on-pri-c); border-color:transparent; }
-  .chip input:checked + .chip-face::before{ width:14px; opacity:1; margin-right:6px; }
-  .chip input:focus-visible + .chip-face{ outline:2px solid var(--pri); outline-offset:2px; }
-
-  .btn{
-    position:relative; overflow:hidden; width:100%; height:56px; margin-top:24px; border:0; border-radius:28px;
-    background:var(--pri); color:var(--on-pri); cursor:pointer;
-    font-size:15px; font-weight:600; letter-spacing:.02em;
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    transition:box-shadow .2s;
-  }
-  .btn:hover{ box-shadow:0 1px 3px rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.14); }
-  .ripple{
-    position:absolute; border-radius:50%; background:currentColor; opacity:.2; pointer-events:none;
-    transform:scale(0); animation:rip .6s ease-out forwards;
-  }
-  @keyframes rip{ to{ transform:scale(1); opacity:0; } }
-
-  /* ---------- pull-tab verdict drawer ---------- */
-  .pull-mount{ margin-top:22px; }
-  .pull{
-    position:relative; padding-bottom:24px;
-    --tone:var(--outline); --tone-on:var(--bg); --tone-c:var(--surf); --on-tone-c:var(--on);
-  }
-  .pull.tone-bad{ --tone:var(--bad); --tone-on:var(--bad-on); --tone-c:var(--bad-c); --on-tone-c:var(--on-bad-c); }
-  .pull.tone-warn{ --tone:var(--warn); --tone-on:var(--warn-on); --tone-c:var(--warn-c); --on-tone-c:var(--on-warn-c); }
-  .pull.tone-ok{ --tone:var(--ok); --tone-on:var(--ok-on); --tone-c:var(--ok-c); --on-tone-c:var(--on-ok-c); }
-  .pull-clip{
-    height:76px; overflow:hidden; border-radius:28px; background:var(--surf); color:var(--on);
-    transition:height .6s var(--ease), background-color .45s ease, color .45s ease;
-  }
-  .pull.tone-on .pull-clip{ background:var(--tone-c); color:var(--on-tone-c); }
-  .pull-head{ height:76px; display:flex; align-items:center; gap:14px; padding:0 20px; }
-  .pull-ico{ width:40px; height:40px; border-radius:50%; flex:none; display:grid; place-items:center; background:var(--pri-c); color:var(--on-pri-c); transition:background .4s,color .4s; }
-  .pull.tone-on .pull-ico{ background:var(--tone); color:var(--tone-on); }
-  .pull-ico svg{ width:22px; height:22px; fill:currentColor; }
-  .pull-ht{ flex:1; min-width:0; }
-  .pull-title{ font-size:17px; font-weight:600; letter-spacing:-.005em; }
-  .pull-sub{ font-size:13px; line-height:1.35; opacity:.75; }
-  .pull-chip{
-    flex:none; height:28px; padding:0 12px; border-radius:8px; display:inline-flex; align-items:center;
-    font:500 11px var(--f-mono); letter-spacing:.08em; text-transform:uppercase;
-    border:1px solid currentColor; opacity:.8;
-  }
-  .pull-body{ padding:4px 20px 44px; display:flex; flex-direction:column; gap:18px; opacity:0; transition:opacity .35s ease; }
-  .vd{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-  .vd-ico{ width:64px; height:64px; border-radius:20px; flex:none; display:grid; place-items:center; background:var(--tone); color:var(--tone-on); }
-  .vd-ico svg{ width:36px; height:36px; fill:currentColor; }
-  .vd-ico.stamp{ animation:stamp .55s cubic-bezier(.34,1.56,.64,1) .12s both; }
-  @keyframes stamp{ 0%{ opacity:0; transform:scale(2.1) rotate(-12deg);} 55%{ opacity:1;} 100%{ opacity:1; transform:scale(1) rotate(0);} }
-  .vd-text{ flex:1 1 160px; min-width:0; font-size:clamp(25px,6.4vw,34px); font-weight:700; line-height:1.12; letter-spacing:-.015em; text-wrap:balance; }
-  body.lang-th .vd-text{ letter-spacing:0; line-height:1.3; }
-  .vd-score{ margin-left:auto; text-align:right; font-family:var(--f-mono); font-variant-numeric:tabular-nums; }
-  .vd-num{ font-size:30px; font-weight:500; }
-  .vd-of{ font-size:13px; opacity:.65; margin-left:2px; }
-  .vd-lbl{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; opacity:.7; }
-  .stats{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-  .stat{ background:var(--glass); border-radius:16px; padding:12px 16px; min-width:0; }
-  .lbl{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; opacity:.7; }
-  .big{ font:500 24px var(--f-mono); margin-top:2px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
-  .meter{ height:8px; border-radius:4px; background:var(--glass-2); overflow:hidden; }
-  .meter .fill{ height:100%; width:0; border-radius:4px; background:var(--tone); transition:width .8s var(--ease) .25s; }
-  .findings{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
-  .finding{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; padding:12px 14px; border-radius:16px; background:var(--glass); font-size:14px; line-height:1.55; }
-  .f-ico{ width:26px; height:26px; border-radius:50%; display:grid; place-items:center; margin-top:1px; }
-  .f-ico svg{ width:16px; height:16px; fill:currentColor; }
-  .finding.bad .f-ico{ background:var(--bad); color:var(--bad-on); }
-  .finding.warn .f-ico{ background:var(--warn); color:var(--warn-on); }
-  .finding.ok .f-ico{ background:var(--ok); color:var(--ok-on); }
-  .f-mark{ display:block; font:500 11px var(--f-mono); letter-spacing:.08em; text-transform:uppercase; opacity:.7; margin-bottom:1px; }
-  .pull[data-state="open"] .finding{ animation:rise .5s var(--ease) both; animation-delay:calc(var(--i) * 60ms + 260ms); }
-  @keyframes rise{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:none;} }
-  .note{ margin:0; font-size:15px; line-height:1.65; padding-top:14px; border-top:1px solid var(--glass-2); }
-
-  .pull-tab{
-    position:absolute; left:50%; bottom:0; transform:translateX(-50%); z-index:2;
-    width:88px; height:48px; border:0; border-radius:24px; padding:0;
-    background:var(--pri); color:var(--on-pri); cursor:grab; touch-action:none;
-    display:grid; place-items:center; box-shadow:0 2px 4px rgba(0,0,0,.28),0 6px 12px 2px rgba(0,0,0,.14);
-    -webkit-tap-highlight-color:transparent;
-  }
-  .pull-tab:active{ cursor:grabbing; }
-  .pull-tab::before{ content:""; position:absolute; top:7px; width:26px; height:3px; border-radius:2px; background:currentColor; opacity:.45; }
-  .pull-tab svg{ width:26px; height:26px; fill:currentColor; margin-top:8px; transform:rotate(calc(var(--p) * 180deg)); transition:transform .5s var(--ease); }
-  .pull.dragging .pull-tab svg, .pull.dragging .pull-clip, .pull.dragging .pull-body{ transition:none !important; }
-  .pull-tab.nudge{ animation:nudge 1.1s var(--ease) .5s 1; }
-  @keyframes nudge{
-    0%,100%{ transform:translateX(-50%) translateY(0); }
-    30%{ transform:translateX(-50%) translateY(9px); }
-    55%{ transform:translateX(-50%) translateY(0); }
-    75%{ transform:translateX(-50%) translateY(5px); }
-  }
-
-  /* ---------- notes + footer ---------- */
-  .evidence{ margin-top:44px; }
-  details{ background:var(--surf); border-radius:16px; margin-bottom:8px; overflow:hidden; }
-  summary{
-    cursor:pointer; list-style:none; min-height:56px; padding:14px 20px;
-    display:flex; align-items:center; justify-content:space-between; gap:14px; font-weight:500; font-size:15px;
-  }
-  summary::-webkit-details-marker{ display:none; }
-  summary::after{
-    content:""; flex:none; width:8px; height:8px; margin-right:4px;
-    border-right:2px solid var(--on-v); border-bottom:2px solid var(--on-v);
-    transform:rotate(45deg); transition:transform .3s var(--ease);
-  }
-  details.is-open summary::after{ transform:rotate(225deg); }
-  details{ transition:background-color .35s ease; }
-  details.is-open{ background:var(--surf-hi); }
-  summary{ transition:color .25s, background-color .2s; }
-  summary:hover{ background:var(--glass-2); }
-  details.is-open summary{ color:var(--pri); }
-  details.is-open .body > p, details.is-open .body li{ animation:rise .5s var(--ease) both; animation-delay:calc(var(--k,0) * 55ms + 90ms); }
-  details .body{ padding:0 20px 20px; font-size:14.5px; line-height:1.7; color:var(--on-v); }
-  details .body p{ margin:0 0 10px; }
-  details .body ul{ margin:8px 0 0; padding-left:20px; }
-  details .body li{ margin-bottom:8px; }
-  details .body b{ color:var(--on); font-weight:600; }
-  details .body code{ font-family:var(--f-mono); font-size:13px; padding:2px 6px; border-radius:6px; background:var(--glass-2); color:var(--on); }
-  .kicker{ margin-top:22px; font:400 11px var(--f-mono); letter-spacing:.06em; color:var(--outline); text-transform:uppercase; line-height:1.7; }
-  footer{ margin-top:32px; padding-block:20px 56px; border-top:1px solid var(--outline-v); font-size:12.5px; line-height:1.7; color:var(--on-v); }
-  footer b{ color:var(--on); font-weight:600; }
-
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{ animation-duration:.01ms !important; animation-delay:0s !important; transition-duration:.01ms !important; transition-delay:0s !important; }
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <header class="top">
   <div class="gut">
@@ -362,29 +42,29 @@
       <div class="sec-label" data-i18n="intakeLabel">Intake form</div>
       <form class="card" id="intakeUsb" novalidate>
         <div class="card-head">
-          <h2 data-i18n="cardTitleUsb">Listing details — storage drive</h2>
-          <span class="ex" id="exUsb" data-i18n="exampleNote">Example values loaded. Edit them, then run the check.</span>
+          <h2 data-i18n="cardTitleUsb">Listing details</h2>
         </div>
         <div class="grid">
           <div class="tf" id="tfPriceUsb">
             <label class="tf-label" for="priceUsb" data-i18n="lblPrice">Listed price</label>
-            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="priceUsb" inputmode="decimal" placeholder="199" min="0" step="1" value="299"></div>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="priceUsb" inputmode="decimal" placeholder="199" min="0" step="1"></div>
             <div class="tf-help" id="helpPriceUsb" hidden></div>
           </div>
-          <div class="tf">
+          <div class="tf" id="tfCapacityUsb">
             <label class="tf-label" for="capacityUsb" data-i18n="lblCapacity">Advertised capacity</label>
-            <div class="tf-row sel"><select id="capacityUsb">
+            <div class="tf-row sel"><select id="capacityUsb"><option value="" data-i18n="selectPrompt">Select</option>
               <option value="32">32 GB</option><option value="64">64 GB</option>
               <option value="128">128 GB</option><option value="256">256 GB</option>
-              <option value="512">512 GB</option><option value="1024" selected>1 TB</option>
+              <option value="512">512 GB</option><option value="1024">1 TB</option>
               <option value="2048">2 TB</option><option value="4096">4 TB</option>
               <option value="8192">8 TB</option><option value="16384">16 TB</option>
             </select></div>
+            <div class="tf-help" id="helpCapacityUsb" hidden></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="brandUsb" data-i18n="lblBrand">Brand on the listing</label>
-            <div class="tf-row sel"><select id="brandUsb">
-              <option value="sandisk" selected>SanDisk</option><option value="kingston">Kingston</option>
+            <div class="tf-row sel"><select id="brandUsb"><option value="" data-i18n="selectPrompt">Select</option>
+              <option value="sandisk">SanDisk</option><option value="kingston">Kingston</option>
               <option value="samsung">Samsung</option><option value="lexar">Lexar</option>
               <option value="transcend">Transcend</option><option value="adata">ADATA</option>
               <option value="hp">HP</option><option value="sony">Sony</option><option value="toshiba">Toshiba</option>
@@ -399,7 +79,7 @@
           <fieldset class="chips full" id="ratingUsbSet"></fieldset>
           <fieldset class="chips full" id="ifaceUsbSet"></fieldset>
         </div>
-        <button type="submit" class="btn"><span data-i18n="runBtn">Run the check →</span></button>
+        <button type="button" class="btn"><span data-i18n="runBtn">Run the check</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button>
       </form>
 
       <div class="pull-mount" id="mountUsb"></div>
@@ -419,40 +99,40 @@
       <div class="sec-label" data-i18n="intakeLabel">Intake form</div>
       <form class="card" id="intakePower" novalidate>
         <div class="card-head">
-          <h2 data-i18n="cardTitlePower">Listing details — power bank</h2>
-          <span class="ex" id="exPower" data-i18n="exampleNote">Example values loaded. Edit them, then run the check.</span>
+          <h2 data-i18n="cardTitlePower">Listing details</h2>
         </div>
         <div class="grid">
           <div class="tf" id="tfPricePower">
             <label class="tf-label" for="pricePower" data-i18n="lblPrice">Listed price</label>
-            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="pricePower" inputmode="decimal" placeholder="299" min="0" step="1" value="590"></div>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="pricePower" inputmode="decimal" placeholder="299" min="0" step="1"></div>
             <div class="tf-help" id="helpPricePower" hidden></div>
           </div>
-          <div class="tf">
+          <div class="tf" id="tfCapacityPower">
             <label class="tf-label" for="capacityPower" data-i18n="lblCapacityMah">Advertised capacity (mAh)</label>
-            <div class="tf-row"><input type="number" id="capacityPower" inputmode="numeric" placeholder="30000" min="0" step="1000" value="20000"><span class="tf-aff">mAh</span></div>
+            <div class="tf-row"><input type="number" id="capacityPower" inputmode="numeric" placeholder="30000" min="0" step="1000"><span class="tf-aff">mAh</span></div>
+            <div class="tf-help" id="helpCapacityPower" hidden></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="marketingWatt" data-i18n="lblMarketingW">Big bold wattage on the box/listing</label>
-            <div class="tf-row"><input type="number" id="marketingWatt" inputmode="decimal" placeholder="45" min="0" step="1" value="45"><span class="tf-aff">W</span></div>
+            <div class="tf-row"><input type="number" id="marketingWatt" inputmode="decimal" placeholder="45" min="0" step="1"><span class="tf-aff">W</span></div>
             <div class="tf-help" data-i18n="hintMarketingW"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="regVoltage" data-i18n="lblRegLabel">Regulatory label output rating</label>
             <div class="tf-row">
-              <input type="number" id="regVoltage" inputmode="decimal" placeholder="5" min="0" step="0.1" value="9" aria-label="Volts">
+              <input type="number" id="regVoltage" inputmode="decimal" placeholder="5" min="0" step="0.1" aria-label="Volts">
               <span class="tf-aff">V ×</span>
-              <input type="number" id="regCurrent" inputmode="decimal" placeholder="1.8" min="0" step="0.1" value="3" aria-label="Amps">
+              <input type="number" id="regCurrent" inputmode="decimal" placeholder="1.8" min="0" step="0.1" aria-label="Amps">
               <span class="tf-aff">A</span>
-              <span class="calc" id="regCalc" aria-live="polite">= 27 W</span>
+              <span class="calc" id="regCalc" aria-live="polite" hidden></span>
             </div>
             <div class="tf-help" data-i18n="hintRegLabel"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="brandPower" data-i18n="lblBrand">Brand on the listing</label>
-            <div class="tf-row sel"><select id="brandPower">
+            <div class="tf-row sel"><select id="brandPower"><option value="" data-i18n="selectPrompt">Select</option>
               <option value="anker">Anker</option><option value="xiaomi">Xiaomi</option>
-              <option value="baseus" selected>Baseus</option><option value="romoss">Romoss</option>
+              <option value="baseus">Baseus</option><option value="romoss">Romoss</option>
               <option value="ugreen">UGREEN</option><option value="hp">HP</option>
               <option value="generic" data-i18n="brandGeneric">Generic / no-name</option>
               <option value="other" data-i18n="brandOther">Other / unlisted brand</option>
@@ -464,7 +144,7 @@
           </div>
           <fieldset class="chips full" id="ratingPowerSet"></fieldset>
         </div>
-        <button type="submit" class="btn"><span data-i18n="runBtn">Run the check →</span></button>
+        <button type="button" class="btn"><span data-i18n="runBtn">Run the check</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button>
       </form>
 
       <div class="pull-mount" id="mountPower"></div>
@@ -484,42 +164,41 @@
       <div class="sec-label" data-i18n="intakeLabel">Intake form</div>
       <form class="card" id="intakeCharger" novalidate>
         <div class="card-head">
-          <h2 data-i18n="cardTitleCharger">Listing details — charger</h2>
-          <span class="ex" id="exCharger" data-i18n="exampleNote">Example values loaded. Edit them, then run the check.</span>
+          <h2 data-i18n="cardTitleCharger">Listing details</h2>
         </div>
         <div class="grid">
           <div class="tf" id="tfPriceCharger">
             <label class="tf-label" for="priceCharger" data-i18n="lblPrice">Listed price</label>
-            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="priceCharger" inputmode="decimal" placeholder="590" min="0" step="1" value="590"></div>
+            <div class="tf-row"><span class="tf-aff">฿</span><input type="number" id="priceCharger" inputmode="decimal" placeholder="590" min="0" step="1"></div>
             <div class="tf-help" id="helpPriceCharger" hidden></div>
           </div>
-          <div class="tf">
+          <div class="tf" id="tfWattCharger">
             <label class="tf-label" for="wattCharger" data-i18n="lblMarketingW">Big bold wattage on the box/listing</label>
-            <div class="tf-row"><input type="number" id="wattCharger" inputmode="decimal" placeholder="65" min="0" step="1" value="65"><span class="tf-aff">W</span></div>
-            <div class="tf-help" data-i18n="hintMarketingWc"></div>
+            <div class="tf-row"><input type="number" id="wattCharger" inputmode="decimal" placeholder="65" min="0" step="1"><span class="tf-aff">W</span></div>
+            <div class="tf-help" id="helpWattCharger" data-i18n="hintMarketingWc"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="regVoltageC" data-i18n="lblRegMax">Highest output step on the label</label>
             <div class="tf-row">
-              <input type="number" id="regVoltageC" inputmode="decimal" placeholder="20" min="0" step="0.1" value="9" aria-label="Volts">
+              <input type="number" id="regVoltageC" inputmode="decimal" placeholder="20" min="0" step="0.1" aria-label="Volts">
               <span class="tf-aff">V ×</span>
-              <input type="number" id="regCurrentC" inputmode="decimal" placeholder="3.25" min="0" step="0.01" value="2" aria-label="Amps">
+              <input type="number" id="regCurrentC" inputmode="decimal" placeholder="3.25" min="0" step="0.01" aria-label="Amps">
               <span class="tf-aff">A</span>
-              <span class="calc" id="regCalcC" aria-live="polite">= 18 W</span>
+              <span class="calc" id="regCalcC" aria-live="polite" hidden></span>
             </div>
             <div class="tf-help" data-i18n="hintRegMax"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="weightCharger" data-i18n="lblWeight">Weight (optional)</label>
-            <div class="tf-row"><input type="number" id="weightCharger" inputmode="decimal" placeholder="110" min="0" step="1" value="52"><span class="tf-aff">g</span></div>
+            <div class="tf-row"><input type="number" id="weightCharger" inputmode="decimal" placeholder="110" min="0" step="1"><span class="tf-aff">g</span></div>
             <div class="tf-help" data-i18n="hintWeight"></div>
           </div>
           <div class="tf">
             <label class="tf-label" for="brandCharger" data-i18n="lblBrand">Brand on the listing</label>
-            <div class="tf-row sel"><select id="brandCharger">
+            <div class="tf-row sel"><select id="brandCharger"><option value="" data-i18n="selectPrompt">Select</option>
               <option value="apple">Apple</option><option value="samsung">Samsung</option>
               <option value="anker">Anker</option><option value="baseus">Baseus</option>
-              <option value="ugreen" selected>UGREEN</option><option value="xiaomi">Xiaomi</option>
+              <option value="ugreen">UGREEN</option><option value="xiaomi">Xiaomi</option>
               <option value="belkin">Belkin</option>
               <option value="generic" data-i18n="brandGeneric">Generic / no-name</option>
               <option value="other" data-i18n="brandOther">Other / unlisted brand</option>
@@ -532,7 +211,7 @@
           <fieldset class="chips full" id="stepsChargerSet"></fieldset>
           <fieldset class="chips full" id="ratingChargerSet"></fieldset>
         </div>
-        <button type="submit" class="btn"><span data-i18n="runBtn">Run the check →</span></button>
+        <button type="button" class="btn"><span data-i18n="runBtn">Run the check</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button>
       </form>
 
       <div class="pull-mount" id="mountCharger"></div>
@@ -551,945 +230,9 @@
   </div>
 </main>
 
-<script>
-(function(){
 
-var T = {
-en: {
-  tabUsb:'Flash Drive', tabPower:'Power Bank',
-  tag:'◉ Case intake — pre-purchase division',
-  titleUsb:'Is that <span class="strike">1TB</span> drive really<br>1TB, or a lie?',
-  subUsb:'Fill in what the listing says. Get a plain-language readout on whether it\'s <b>physically plausible</b> — before your money leaves your account, not after.',
-  titlePower:'Is that <span class="strike">45W</span> power bank<br>really 45W, or a lie?',
-  subPower:'Skip the boastful number on the box. Enter the <b>actual regulatory rating</b> printed in small text, and we\'ll do the math for you.',
-  caseline:'FILE TYPE: Pre-purchase sanity check · Not a lab test · Not legal advice',
-  intakeLabel:'Intake form',
-  cardTitleUsb:'Listing details — storage drive', cardTitlePower:'Listing details — power bank',
-  cardNo:'FORM 12-A<br>rev. 2026', cardNo2:'FORM 12-B<br>rev. 2026',
-  lblPrice:'Listed price', lblCapacity:'Advertised capacity', lblCapacityMah:'Advertised capacity (mAh)',
-  lblMarketingW:'Big bold wattage on the box/listing', hintMarketingW:'e.g. "45W Fast Charge" printed large on the packaging or title',
-  lblRegLabel:'Regulatory label output rating', hintRegLabel:'Small print near the barcode/CE/mOK mark — often says something like "5V⎓1.8A"',
-  lblBrand:'Brand on the listing', lblPlatform:'Where you found it', lblRating:'Seller rating (if shown)',
-  lblInterface:'Claimed interface',
-  lblRealW:'Regulatory-rated output', lblVsClaim:'Vs. marketing claim',
-  brandGeneric:'Generic / no-name', brandOther:'Other / unlisted brand',
-  platOfficial:'Official brand store (Shopee/Lazada Mall etc.)', platShopee:'Shopee — regular seller',
-  platLazada:'Lazada — regular seller', platTiktok:'TikTok Shop', platFb:'Facebook Marketplace / group',
-  platPhysical:'Physical shop', platOther:'Other / random link',
-  ratUnknown:'Not shown / can\'t tell', ratNew:'New seller, no reviews',
-  ratLow:'Rated, but mostly negative/mixed', ratGood:'Rated, mostly positive',
-  ifaceDual:'USB-A + USB-C (dual connector)', ifaceUnsure:'Not stated / unsure',
-  runBtn:'Run the check →', findingsLabel:'Findings',
-  lblPerGb:'Price per real GB, if genuine', lblVsMarket:'Vs. typical market rate',
-  evidenceLabel:'Case notes — read before you buy',
-  d1sum:'How sellers fake the capacity',
-  d1body:'<p>The drive isn\'t lying by accident — its <b>firmware</b> is instructed to lie. A cheap 8GB or 16GB chip gets reflashed with controller firmware that reports a fake size (e.g. "1TB") to your computer.</p><ul><li>Windows/macOS shows "1TB available" because it trusts what the firmware reports — it doesn\'t measure the physical chip.</li><li>The drive works normally at first. It only fails once you\'ve written more data than the <i>real</i> chip can hold — older files get silently overwritten or corrupted.</li><li>This is why the scam often isn\'t caught until weeks later, when someone opens an old file and finds it\'s garbage or gone.</li><li>Tools like <code>h2testw</code> or <code>F3</code> catch this — but only after you already own the drive. That\'s the gap this tool tries to close, before you pay.</li></ul>',
-  d2sum:'Brand red flags',
-  d2body:'<p>Some brand names on listings are almost never real, because the actual manufacturer doesn\'t make that product category at all:</p><ul><li><b>HP</b> does not manufacture flash drives, SD cards, or SSDs in-house — HP-branded storage from third parties is licensed/rebranded at best, and "HP 2TB USB drive for ฿150" is essentially always fake.</li><li>Watch for near-miss spellings: <code>SanDisc</code>, <code>Kingstom</code>, <code>Samsong</code>.</li><li>Real 1TB+ capacities from SanDisk, Kingston, or Samsung are almost never sold under ฿1,000 by anyone.</li></ul>',
-  d3sum:'Quick sanity checks before you tap "buy"',
-  d3body:'<ul><li>Did you find it on <b>TikTok Shop</b> or a <b>Facebook ad</b> from a seller with no real reviews or a brand-new store?</li><li>Is the price less than half of what the same capacity costs at JIB/BaNANA/PowerBuy?</li><li>Does the listing photo look like a reused stock photo across many different "brands"?</li><li>Is the capacity unusually round and large — 1TB, 2TB, 8TB — for a tiny keychain drive?</li><li>Does the seller avoid answering direct questions about the flash chip brand?</li><li>Does the packaging match official product photos exactly, including font weight and hologram placement?</li></ul>',
-  d4sum:'What this tool can\'t tell you',
-  d4body:'<p>This is a <b>pre-purchase heuristic</b>, not a lab result. It flags implausible price-per-GB, risky platforms, and known-fake brand patterns — it can\'t inspect the actual chip inside a drive you haven\'t bought yet.</p><p>A "looks genuine" result lowers your risk, but doesn\'t guarantee authenticity. Running a real write/read tool like <code>h2testw</code> or <code>F3</code> once it arrives is still the only way to confirm actual capacity.</p>',
-  kickerUsb:'Reference prices sourced from Thai retail listings (SanDisk/Kingston, official stores) · Updated periodically, not live',
-  kickerPower:'Reference prices sourced from Thai retail listings (Anker/Xiaomi/Baseus, official stores) · Updated periodically, not live',
-  footerBody:'<b>Data handling:</b> All checks run entirely in your browser. Nothing you enter is sent to a server, logged, or stored. This tool gives no legal, financial, or purchasing guarantee — it is a sanity check, not proof of fraud or authenticity.',
-  p1sum:'Marketing wattage vs. the regulatory label',
-  p1body:'<p>The big number on the box ("45W", "65W", "100W") is a <b>marketing/model name</b>, not always a certified spec. The number that\'s legally required to be accurate is the small <b>output rating</b> near the safety marks — printed as Voltage × Amperage, e.g. <code>5V⎓1.8A</code>.</p><ul><li>Multiply V × A yourself: <code>5V × 1.8A = 9W</code>. If the box says "45W" but the label only certifies 9W, the 45W is likely an input spec, a best-case single-port peak, or simply inflated.</li><li>Genuine fast-charging banks (PD/QC) usually print a full table of supported profiles (5V/3A, 9V/3A, 12V/3A etc.) — a single low line with a big exterior number is a mismatch worth question.</li></ul>',
-  p2sum:'Why the mAh number lies too',
-  p2body:'<p>Power bank capacity is normally advertised using the <b>internal cell capacity</b> at 3.7V — but the bank outputs 5V (or higher) to charge your phone. Converting voltage and real-world circuit losses mean you never get the full advertised mAh out the USB port.</p><ul><li>A rough rule of thumb: usable output is typically <b>60–65% of the advertised cell mAh</b> once voltage conversion and efficiency losses are accounted for — this is true even for genuine, reputable brands, not just scams.</li><li>This isn\'t automatically a scam — it\'s standard industry practice and usually disclosed in fine print — but it explains why a "30,000mAh" bank never seems to charge a phone 6+ times.</li><li>What <i>is</i> a red flag: a bank that\'s physically small/light for its claimed mAh. Cells have a real, fairly fixed energy density — a suspiciously light "30,000mAh" bank likely has a much smaller real cell inside.</li></ul>',
-  p3sum:'Where to actually find the regulatory label',
-  p3body:'<p>Look for a small printed or engraved block, usually on the underside or back of the bank, near the CE mark, mOK (Thai TISI) mark, or barcode. It typically lists input and output ratings for each port, such as:</p><ul><li><code>Input: 5V⎓2A</code></li><li><code>Output: 5V⎓2.4A / 9V⎓2A</code></li></ul><p>If you\'re checking before buying, ask the seller for a clear close-up photo of this label — a legitimate seller can provide one easily; a dropshipper reselling stock photos often can\'t.</p>',
-  p4sum:'What this tool can\'t tell you',
-  p4body:'<p>This is a <b>pre-purchase heuristic</b>. It can\'t verify the actual cell inside a bank you haven\'t bought, and it can\'t catch every counterfeit — some counterfeits print accurate-looking labels too.</p><p>For safety, genuine third-party certification (CE, mOK/TISI for Thailand, UN38.3 for lithium battery air/shipping safety) matters more than any number on the box. If in doubt, buy from a source that can be held accountable.</p>',
-  below:'% below', above:'% above',
-  markPrice:'PRICE', markBrand:'BRAND', markPlatform:'PLATFORM', markSeller:'SELLER', markSpecs:'SPECS', markCapacity:'CAPACITY', markWatt:'WATTAGE', markSize:'SIZE',
-  stampFake:'Likely fake', stampSuspect:'Proceed with caution', stampClean:'Looks plausible',
-  noteFakeUsb:'The math doesn\'t add up. At this price, the seller would be losing money selling genuine flash memory — the far more likely explanation is a reflashed, lower-capacity chip reporting a false size. Do not buy without independent verification.',
-  noteSuspectUsb:'Not a slam-dunk scam, but enough flags here that you shouldn\'t buy on convenience alone. Ask the seller direct questions, check for a physical store presence, and use buyer-protected checkout.',
-  noteCleanUsb:'Nothing here trips the usual scam patterns. That\'s a good sign, not a guarantee. A post-purchase write test is still cheap insurance.',
-  noteFakePower:'The marketing number and the regulatory rating are far apart. This is a strong sign the "big number" is inflated marketing, not a certified spec — the bank likely can\'t deliver anywhere near the advertised charging speed.',
-  noteSuspectPower:'There\'s a noticeable gap between the claim and the certified rating, or other flags worth checking. Ask for a clear photo of the actual regulatory label before buying.',
-  noteCleanPower:'The claimed wattage and regulatory rating are broadly consistent, and other checks look fine. Still worth confirming the bank\'s weight feels right for its claimed capacity once it arrives.',
-  fPriceBad1:function(p,m,pct){ return '฿'+p+'/GB is about '+pct+'% below typical market rate for this capacity (~฿'+m+'/GB). Real flash memory at this size cannot be sold this cheaply and be genuine.'; },
-  fPriceBad2:function(p,m){ return '฿'+p+'/GB is well under the typical ~฿'+m+'/GB rate for genuine drives this size.'; },
-  fPriceWarn:function(p,m){ return '฿'+p+'/GB is noticeably below the ~฿'+m+'/GB baseline. Could be a real sale — worth double-checking the seller.'; },
-  fPriceOk:function(p,m){ return '฿'+p+'/GB is in line with typical market rate (~฿'+m+'/GB). Price alone isn\'t a red flag here.'; },
-  fBrandHp:'HP does not manufacture flash drives, SD cards, or SSDs as a core product line. Storage sold under the HP name is almost always a rebrand or counterfeit.',
-  fBrandGeneric:'No recognizable brand backing this listing means no warranty accountability — higher baseline risk even if the price looks reasonable.',
-  fBrandOk:function(b){ return b+' is a real storage manufacturer. Doesn\'t guarantee this listing is genuine, but it\'s not an automatic red flag.'; },
-  fPlatRisky:function(p){ return p+' has weaker seller vetting than major marketplace storefronts — counterfeit storage is disproportionately common here.'; },
-  fPlatOfficial:'Official brand storefronts are the lowest-risk source.',
-  fPlatRegular:'Regular marketplace storefronts carry moderate protection but still verify the seller specifically.',
-  fSellerNew:'A brand-new store with no review history gives you nothing to check against. Not proof of a scam, but it removes a layer of safety.',
-  fSellerLow:'Mixed or negative reviews on a storage listing are a meaningful warning sign.',
-  fSpecsUsb2:function(gb){ return 'USB 2.0 speeds make a genuine '+gb+' drive impractically slow to use — legitimate large-capacity drives almost always ship as USB 3.0+.'; },
-  fCapExtreme:function(gb){ return gb+' in a small consumer flash drive is at the very high end of what\'s genuinely manufactured at consumer prices.'; },
-  fWattBad:function(claim,real){ return 'Box/listing claims '+claim+'W, but the regulatory label only certifies '+real+'W — a gap this large usually means the marketing number isn\'t the certified output.'; },
-  fWattWarn:function(claim,real){ return 'Box/listing claims '+claim+'W vs. a certified '+real+'W on the label — some gap is normal (input vs output, peak vs sustained), but worth double-checking.'; },
-  fWattOk:function(claim,real){ return 'Claimed '+claim+'W roughly matches the certified '+real+'W rating. Consistent, no red flag here.'; },
-  fWattMissing:'No regulatory V/A entered — without this, the marketing wattage can\'t be independently verified. Ask the seller for a label photo.',
-  fBrandPowerHp:'HP does not manufacture power banks as a core product line — treat "HP" branded power banks as a strong red flag regardless of price.',
-  fCapPowerBad1:function(p,m,pct){ return '฿'+p+'/mAh is about '+pct+'% below typical market rate. Genuine lithium cells at this capacity cost more than this to manufacture.'; },
-  fCapPowerWarn:function(p,m){ return '฿'+p+'/mAh is noticeably below the ~฿'+m+'/mAh baseline for genuine cells. Worth checking the seller carefully.'; },
-  fCapPowerOk:function(p,m){ return '฿'+p+'/mAh is broadly in line with genuine market pricing (~฿'+m+'/mAh).'; },
-},
-th: {
-  tabUsb:'แฟลชไดรฟ์', tabPower:'พาวเวอร์แบงค์',
-  tag:'◉ แผนกตรวจสอบก่อนซื้อ',
-  titleUsb:'ไดรฟ์ <span class="strike">1TB</span> นั้น<br>ของจริง หรือของหลอก?',
-  subUsb:'กรอกข้อมูลตามประกาศขาย รับผลตรวจสอบแบบเข้าใจง่ายว่า <b>เป็นไปได้จริงหรือไม่</b> — ก่อนเงินออกจากบัญชี ไม่ใช่หลังจากนั้น',
-  titlePower:'พาวเวอร์แบงค์ <span class="strike">45W</span> นั้น<br>แรงจริง หรือแค่โฆษณา?',
-  subPower:'ข้ามตัวเลขโอ้อวดบนกล่อง กรอก <b>ค่ากำกับจริงตามฉลาก</b> ที่พิมพ์ตัวเล็ก แล้วให้เราคำนวณให้',
-  caseline:'ประเภทไฟล์: ตรวจสอบก่อนซื้อ · ไม่ใช่การทดสอบในห้องแล็บ · ไม่ใช่คำแนะนำทางกฎหมาย',
-  intakeLabel:'แบบฟอร์มรับเรื่อง',
-  cardTitleUsb:'รายละเอียดสินค้า — ไดรฟ์เก็บข้อมูล', cardTitlePower:'รายละเอียดสินค้า — พาวเวอร์แบงค์',
-  cardNo:'แบบฟอร์ม 12-A<br>ฉบับปี 2026', cardNo2:'แบบฟอร์ม 12-B<br>ฉบับปี 2026',
-  lblPrice:'ราคาที่ประกาศขาย', lblCapacity:'ความจุที่โฆษณา', lblCapacityMah:'ความจุที่โฆษณา (mAh)',
-  lblMarketingW:'ตัวเลขวัตต์ตัวใหญ่บนกล่อง/ประกาศ', hintMarketingW:'เช่น "45W ชาร์จเร็ว" ที่พิมพ์ตัวใหญ่บนบรรจุภัณฑ์หรือหัวข้อ',
-  lblRegLabel:'ค่ากำกับตามฉลากจริง', hintRegLabel:'ตัวพิมพ์เล็กใกล้บาร์โค้ด/เครื่องหมาย CE/มอก. — มักเขียนว่า "5V⎓1.8A"',
-  lblBrand:'แบรนด์ตามประกาศ', lblPlatform:'เจอสินค้านี้จากที่ไหน', lblRating:'เรตติ้งผู้ขาย (ถ้ามีแสดง)',
-  lblInterface:'พอร์ตเชื่อมต่อที่ระบุ',
-  lblRealW:'กำลังไฟตามฉลากจริง', lblVsClaim:'เทียบกับที่โฆษณา',
-  brandGeneric:'ไม่มีแบรนด์ / ไม่ระบุยี่ห้อ', brandOther:'แบรนด์อื่น / ไม่อยู่ในรายการ',
-  platOfficial:'ร้านค้าแบรนด์ทางการ (Shopee/Lazada Mall ฯลฯ)', platShopee:'Shopee — ร้านค้าทั่วไป',
-  platLazada:'Lazada — ร้านค้าทั่วไป', platTiktok:'TikTok Shop', platFb:'Facebook Marketplace / กลุ่ม',
-  platPhysical:'ร้านค้าหน้าร้าน', platOther:'อื่น ๆ / ลิงก์ที่ไม่รู้จัก',
-  ratUnknown:'ไม่แสดง / บอกไม่ได้', ratNew:'ร้านใหม่ ยังไม่มีรีวิว',
-  ratLow:'มีเรตติ้ง แต่ส่วนใหญ่เป็นลบ/คละกัน', ratGood:'มีเรตติ้ง ส่วนใหญ่เป็นบวก',
-  ifaceDual:'USB-A + USB-C (สองหัวในตัวเดียว)', ifaceUnsure:'ไม่ได้ระบุ / ไม่แน่ใจ',
-  runBtn:'ตรวจสอบเลย →', findingsLabel:'ผลการตรวจสอบ',
-  lblPerGb:'ราคาต่อ GB จริง หากเป็นของแท้', lblVsMarket:'เทียบกับราคาตลาดทั่วไป',
-  evidenceLabel:'บันทึกคดี — อ่านก่อนตัดสินใจซื้อ',
-  d1sum:'ผู้ขายปลอมความจุได้อย่างไร',
-  d1body:'<p>ไดรฟ์ไม่ได้โกหกโดยบังเอิญ — <b>เฟิร์มแวร์</b> ถูกสั่งให้โกหก ชิปราคาถูก 8GB หรือ 16GB จะถูกแฟลชใหม่ให้รายงานขนาดปลอม เช่น "1TB"</p><ul><li>Windows/macOS แสดง "1TB" เพราะเชื่อสิ่งที่เฟิร์มแวร์รายงาน ไม่ได้วัดชิปจริง</li><li>ไดรฟ์ทำงานปกติช่วงแรก จะมีปัญหาเมื่อเขียนเกินความจุจริง ไฟล์เก่าจะเสียหายแบบเงียบ ๆ</li><li>จึงมักไม่รู้ตัวจนผ่านไปหลายสัปดาห์</li><li>เครื่องมืออย่าง <code>h2testw</code> หรือ <code>F3</code> ตรวจจับได้ แต่ต้องซื้อมาก่อน นี่คือช่องว่างที่เครื่องมือนี้พยายามอุด</li></ul>',
-  d2sum:'สัญญาณเตือนเรื่องแบรนด์',
-  d2body:'<p>บางแบรนด์แทบไม่มีทางเป็นของจริง เพราะผู้ผลิตจริงไม่ได้ทำสินค้าประเภทนั้น:</p><ul><li><b>HP</b> ไม่ได้ผลิตแฟลชไดรฟ์ การ์ด SD หรือ SSD เอง สินค้าที่ติดแบรนด์ HP มักเป็นของก็อปหรือติดยี่ห้อปลอม</li><li>ระวังการสะกดใกล้เคียง: <code>SanDisc</code>, <code>Kingstom</code>, <code>Samsong</code></li><li>ความจุ 1TB ขึ้นไปของแท้จาก SanDisk, Kingston หรือ Samsung แทบไม่มีทางต่ำกว่า 1,000 บาท</li></ul>',
-  d3sum:'เช็กลิสต์ก่อนกด "ซื้อ"',
-  d3body:'<ul><li>เจอจาก <b>TikTok Shop</b> หรือโฆษณา <b>Facebook</b> จากร้านไม่มีรีวิวหรือเปิดใหม่หรือเปล่า?</li><li>ราคาถูกกว่าครึ่งของร้านทางการอย่าง JIB/BaNANA/PowerBuy หรือไม่?</li><li>รูปภาพดูเหมือนภาพสต็อกที่ใช้ซ้ำหลายแบรนด์หรือเปล่า?</li><li>ความจุใหญ่และกลมเกินไปสำหรับไดรฟ์เล็ก ๆ หรือเปล่า?</li><li>ผู้ขายหลีกเลี่ยงตอบคำถามเรื่องยี่ห้อชิปหรือเปล่า?</li><li>บรรจุภัณฑ์ตรงกับของแท้ทุกจุดหรือไม่?</li></ul>',
-  d4sum:'สิ่งที่เครื่องมือนี้บอกคุณไม่ได้',
-  d4body:'<p>นี่คือ <b>การตรวจสอบเชิงฮิวริสติกก่อนซื้อ</b> ไม่ใช่ผลแล็บ ตรวจจับราคาผิดปกติ แพลตฟอร์มเสี่ยง และแบรนด์ปลอมที่รู้จัก แต่ตรวจชิปจริงในไดรฟ์ที่ยังไม่ได้ซื้อไม่ได้</p><p>ผล "ดูสมจริง" ลดความเสี่ยงแต่ไม่การันตี การทดสอบเขียนจริงด้วย <code>h2testw</code> หรือ <code>F3</code> หลังซื้อยังจำเป็นอยู่</p>',
-  kickerUsb:'ราคาอ้างอิงจากประกาศขายจริงในไทย (SanDisk/Kingston ร้านทางการ) · อัปเดตเป็นระยะ',
-  kickerPower:'ราคาอ้างอิงจากประกาศขายจริงในไทย (Anker/Xiaomi/Baseus ร้านทางการ) · อัปเดตเป็นระยะ',
-  footerBody:'<b>การจัดการข้อมูล:</b> การตรวจสอบทั้งหมดทำงานในเบราว์เซอร์ของคุณเท่านั้น ไม่มีข้อมูลถูกส่งไปเซิร์ฟเวอร์ บันทึก หรือจัดเก็บ เครื่องมือนี้ไม่ได้ให้การรับประกันทางกฎหมายหรือการเงิน เป็นเพียงการตรวจสอบเบื้องต้นเท่านั้น',
-  p1sum:'วัตต์โฆษณา เทียบกับฉลากกำกับจริง',
-  p1body:'<p>ตัวเลขใหญ่บนกล่อง ("45W", "65W", "100W") เป็น <b>ชื่อรุ่น/การตลาด</b> ไม่ใช่สเปกที่รับรองเสมอไป ตัวเลขที่กฎหมายบังคับให้ถูกต้องคือ <b>ค่ากำกับเอาต์พุต</b> ตัวเล็กใกล้เครื่องหมายมาตรฐาน เขียนเป็นโวลต์ × แอมป์ เช่น <code>5V⎓1.8A</code></p><ul><li>คูณ V × A เอง: <code>5V × 1.8A = 9W</code> ถ้ากล่องเขียน "45W" แต่ฉลากรับรองแค่ 9W ตัวเลข 45W น่าจะเป็นสเปกอินพุต ค่าสูงสุดแบบพอร์ตเดียว หรือโอ้อวดเกินจริง</li><li>พาวเวอร์แบงค์ชาร์จเร็วของแท้มักพิมพ์ตารางโปรไฟล์เต็ม (5V/3A, 9V/3A ฯลฯ) — ถ้ามีบรรทัดเดียวค่าต่ำแต่ตัวเลขข้างนอกใหญ่มาก ควรตั้งคำถาม</li></ul>',
-  p2sum:'ทำไมตัวเลข mAh ก็โกหกได้เหมือนกัน',
-  p2body:'<p>ความจุพาวเวอร์แบงค์มักโฆษณาด้วย <b>ความจุเซลล์ภายใน</b> ที่ 3.7V แต่เอาต์พุตจริงคือ 5V (หรือสูงกว่า) การแปลงแรงดันและการสูญเสียจริงทำให้ไม่มีทางได้ mAh เต็มตามโฆษณาออกจากพอร์ต USB</p><ul><li>กฎคร่าว ๆ: พลังงานใช้ได้จริงมักอยู่ที่ <b>60–65% ของ mAh เซลล์ที่โฆษณา</b> หลังหักการแปลงแรงดันและประสิทธิภาพ — เป็นจริงแม้กับแบรนด์แท้มีชื่อเสียง ไม่ใช่แค่ของหลอก</li><li>นี่ไม่ใช่การหลอกลวงเสมอไป — เป็นมาตรฐานอุตสาหกรรมและมักระบุในตัวพิมพ์เล็ก — แต่อธิบายว่าทำไม "30,000mAh" ถึงไม่เคยชาร์จโทรศัพท์ได้ 6 รอบตามที่คิด</li><li>สิ่งที่ <i>เป็น</i> สัญญาณเตือน: แบงค์ที่เบาหรือเล็กผิดปกติเทียบกับ mAh ที่อ้าง เซลล์มีความหนาแน่นพลังงานค่อนข้างคงที่ — แบงค์ "30,000mAh" ที่เบาผิดปกติน่าจะมีเซลล์จริงเล็กกว่าที่อ้างมาก</li></ul>',
-  p3sum:'ฉลากกำกับจริงอยู่ตรงไหน',
-  p3body:'<p>มองหาตัวพิมพ์เล็กหรือแกะสลัก มักอยู่ด้านล่างหรือด้านหลังของแบงค์ ใกล้เครื่องหมาย CE, มอก. หรือบาร์โค้ด มักระบุค่าอินพุตและเอาต์พุตของแต่ละพอร์ต เช่น:</p><ul><li><code>Input: 5V⎓2A</code></li><li><code>Output: 5V⎓2.4A / 9V⎓2A</code></li></ul><p>หากตรวจสอบก่อนซื้อ ลองขอรูปถ่ายฉลากนี้ชัด ๆ จากผู้ขาย — ผู้ขายจริงให้ได้ง่าย ๆ ส่วนคนที่ดรอปชิปแล้วใช้ภาพสต็อกมักให้ไม่ได้</p>',
-  p4sum:'สิ่งที่เครื่องมือนี้บอกคุณไม่ได้',
-  p4body:'<p>นี่คือ <b>การตรวจสอบเชิงฮิวริสติกก่อนซื้อ</b> ไม่สามารถตรวจเซลล์จริงในแบงค์ที่ยังไม่ได้ซื้อ และตรวจจับของปลอมทุกชิ้นไม่ได้ — ของปลอมบางชิ้นพิมพ์ฉลากที่ดูสมจริงเช่นกัน</p><p>เพื่อความปลอดภัย การรับรองจากบุคคลที่สามจริง (CE, มอก. สำหรับไทย, UN38.3 สำหรับความปลอดภัยแบตเตอรี่ลิเธียม) สำคัญกว่าตัวเลขบนกล่อง หากไม่แน่ใจ ควรซื้อจากแหล่งที่ตรวจสอบย้อนกลับได้</p>',
-  below:'% ต่ำกว่า', above:'% สูงกว่า',
-  markPrice:'ราคา', markBrand:'แบรนด์', markPlatform:'แพลตฟอร์ม', markSeller:'ผู้ขาย', markSpecs:'สเปก', markCapacity:'ความจุ', markWatt:'กำลังไฟ', markSize:'ขนาด',
-  stampFake:'น่าจะปลอม', stampSuspect:'ควรระวัง', stampClean:'ดูสมเหตุสมผล',
-  noteFakeUsb:'ตัวเลขไม่สมเหตุสมผล ในราคานี้ผู้ขายจะขาดทุนหากขายของแท้ — น่าจะเป็นชิปความจุต่ำที่แฟลชให้รายงานขนาดปลอม อย่าซื้อโดยไม่ตรวจสอบเพิ่มเติม',
-  noteSuspectUsb:'ยังไม่ฟันธง แต่มีสัญญาณเตือนมากพอ ลองถามผู้ขายตรง ๆ เช็กหน้าร้านจริง และจ่ายผ่านระบบคุ้มครองผู้ซื้อ',
-  noteCleanUsb:'ไม่มีสัญญาณหลอกลวงทั่วไป เป็นสัญญาณที่ดีแต่ไม่การันตี การทดสอบเขียนหลังซื้อยังคุ้มค่า',
-  noteFakePower:'ตัวเลขโฆษณากับค่ากำกับจริงต่างกันมาก สัญญาณชัดว่า "ตัวเลขใหญ่" คือการตลาดที่โอ้อวด ไม่ใช่สเปกที่รับรอง แบงค์นี้น่าจะชาร์จเร็วได้ไม่ถึงตามโฆษณา',
-  noteSuspectPower:'มีช่องว่างระหว่างที่อ้างกับค่ารับรองพอสมควร หรือมีสัญญาณอื่นที่ควรตรวจสอบ ลองขอรูปฉลากกำกับจริงก่อนซื้อ',
-  noteCleanPower:'วัตต์ที่อ้างกับค่ากำกับจริงสอดคล้องกันในภาพรวม และการตรวจสอบอื่นก็ดูโอเค ยังควรเช็กน้ำหนักแบงค์ตอนได้รับว่าสมกับความจุที่อ้างหรือไม่',
-  fPriceBad1:function(p,m,pct){ return '฿'+p+'/GB ต่ำกว่าราคาตลาดทั่วไปประมาณ '+pct+'% สำหรับความจุนี้ (~฿'+m+'/GB) หน่วยความจำแท้ขนาดนี้ไม่มีทางขายถูกขนาดนี้ได้'; },
-  fPriceBad2:function(p,m){ return '฿'+p+'/GB ต่ำกว่าราคาทั่วไปที่ ~฿'+m+'/GB มากสำหรับไดรฟ์แท้ขนาดนี้'; },
-  fPriceWarn:function(p,m){ return '฿'+p+'/GB ต่ำกว่าราคาฐาน ~฿'+m+'/GB อย่างเห็นได้ชัด ควรตรวจสอบผู้ขายเพิ่มเติม'; },
-  fPriceOk:function(p,m){ return '฿'+p+'/GB สอดคล้องกับราคาตลาดทั่วไป (~฿'+m+'/GB) ราคาเพียงอย่างเดียวไม่ใช่สัญญาณเตือน'; },
-  fBrandHp:'HP ไม่ได้ผลิตแฟลชไดรฟ์ การ์ด SD หรือ SSD เป็นสินค้าหลัก สินค้าที่ติดแบรนด์ HP มักเป็นของก็อปหรือติดยี่ห้อปลอม',
-  fBrandGeneric:'ไม่มีแบรนด์รองรับ หมายถึงไม่มีการรับประกันหรือชื่อเสียงค้ำ ความเสี่ยงพื้นฐานสูงขึ้น',
-  fBrandOk:function(b){ return b+' เป็นผู้ผลิตจริง ไม่การันตีว่าประกาศนี้แท้ แต่ไม่ใช่สัญญาณเตือนอัตโนมัติ'; },
-  fPlatRisky:function(p){ return p+' มีการตรวจสอบผู้ขายที่อ่อนกว่าร้านหลัก สินค้าปลอมพบได้บ่อยที่นี่'; },
-  fPlatOfficial:'ร้านค้าแบรนด์ทางการมีความเสี่ยงต่ำที่สุด',
-  fPlatRegular:'ร้านทั่วไปมีการคุ้มครองระดับปานกลาง แต่ควรตรวจสอบผู้ขายรายนั้นเพิ่มเติม',
-  fSellerNew:'ร้านใหม่ไม่มีรีวิวให้เทียบเคียง ไม่ได้พิสูจน์ว่าหลอกลวง แต่ลดความปลอดภัยลง',
-  fSellerLow:'รีวิวคละหรือเป็นลบเป็นสัญญาณเตือนที่มีนัยสำคัญ',
-  fSpecsUsb2:function(gb){ return 'ความเร็ว USB 2.0 ทำให้ไดรฟ์แท้ขนาด '+gb+' ใช้งานช้าเกินไปในทางปฏิบัติ — ไดรฟ์ความจุสูงแท้มักเป็น USB 3.0 ขึ้นไป'; },
-  fCapExtreme:function(gb){ return gb+' สำหรับไดรฟ์เล็กถือว่าอยู่ระดับสูงสุดที่ผลิตจริงในราคาผู้บริโภคทั่วไป'; },
-  fWattBad:function(claim,real){ return 'กล่อง/ประกาศอ้าง '+claim+'W แต่ฉลากกำกับรับรองแค่ '+real+'W — ช่องว่างขนาดนี้มักหมายถึงตัวเลขการตลาดไม่ใช่เอาต์พุตที่รับรองจริง'; },
-  fWattWarn:function(claim,real){ return 'อ้าง '+claim+'W เทียบกับฉลากรับรอง '+real+'W — มีช่องว่างบ้างเป็นเรื่องปกติ (อินพุตกับเอาต์พุต) แต่ควรตรวจสอบเพิ่ม'; },
-  fWattOk:function(claim,real){ return 'ที่อ้าง '+claim+'W ใกล้เคียงกับค่ารับรอง '+real+'W สอดคล้องกัน ไม่มีสัญญาณเตือน'; },
-  fWattMissing:'ไม่ได้กรอกค่า V/A ตามฉลาก จึงตรวจสอบตัวเลขวัตต์โฆษณาไม่ได้ ลองขอรูปฉลากจากผู้ขาย',
-  fBrandPowerHp:'HP ไม่ได้ผลิตพาวเวอร์แบงค์เป็นสินค้าหลัก ถือเป็นสัญญาณเตือนชัดเจนไม่ว่าราคาเท่าไหร่',
-  fCapPowerBad1:function(p,m,pct){ return '฿'+p+'/mAh ต่ำกว่าราคาตลาดทั่วไปประมาณ '+pct+'% เซลล์ลิเธียมแท้ขนาดนี้มีต้นทุนสูงกว่านี้'; },
-  fCapPowerWarn:function(p,m){ return '฿'+p+'/mAh ต่ำกว่าฐาน ~฿'+m+'/mAh สำหรับเซลล์แท้อย่างเห็นได้ชัด ควรตรวจสอบผู้ขายเพิ่มเติม'; },
-  fCapPowerOk:function(p,m){ return '฿'+p+'/mAh สอดคล้องกับราคาตลาดของแท้โดยรวม (~฿'+m+'/mAh)'; },
-}
-};
-
-Object.assign(T.en, {
-  appName:'ChaiMai', eyebrow:'Pre-purchase check',
-  caseline:'Pre-purchase sanity check · Not a lab test · Not legal advice',
-  evidenceLabel:'Read before you buy',
-  exampleNote:'Example values loaded. Edit them, then run the check.',
-  verdictHead:'Verdict', riskLabel:'Risk score',
-  sealed:'Sealed', revealed:'Revealed',
-  pullHint:'Pull the tab down to reveal the verdict',
-  openSub:'Based on the details you entered',
-  pullAria:'Pull down to reveal the verdict', closeAria:'Push up to seal the verdict',
-  errPrice:'Enter the listed price.'
-});
-Object.assign(T.th, {
-  appName:'ChaiMai', eyebrow:'ตรวจก่อนซื้อ',
-  caseline:'ตรวจสอบเบื้องต้นก่อนซื้อ · ไม่ใช่ผลแล็บ · ไม่ใช่คำแนะนำทางกฎหมาย',
-  evidenceLabel:'อ่านก่อนตัดสินใจซื้อ',
-  exampleNote:'ใส่ค่าตัวอย่างไว้ให้แล้ว แก้ไขแล้วกดตรวจสอบ',
-  verdictHead:'ผลตรวจ', riskLabel:'คะแนนความเสี่ยง',
-  sealed:'ปิดผนึก', revealed:'เปิดแล้ว',
-  pullHint:'ดึงแท็บลงเพื่อดูผลตรวจ',
-  openSub:'อิงจากข้อมูลที่กรอก',
-  pullAria:'ดึงลงเพื่อดูผลตรวจ', closeAria:'ดันขึ้นเพื่อปิดผนึกผลตรวจ',
-  errPrice:'กรอกราคาที่ประกาศขาย'
-});
-
-Object.assign(T.en, {
-  tabCharger:"Charger",
-  titleCharger:"Is that <span class=\"strike\">65W</span> charger<br>really fast, or just claiming?",
-  subCharger:"Some bricks tell your phone they can fast charge over PD, then can’t back it up. Enter the <b>real output steps on the label</b> and we’ll check whether the claim holds up.",
-  cardTitleCharger:"Listing details — charger or brick",
-  hintMarketingWc:"e.g. “65W GaN Fast Charger” printed large on the box or title",
-  lblRegMax:"Highest output step on the label",
-  hintRegMax:"Find the top step in the label’s output list, such as 20V⎓3.25A",
-  lblWeight:"Weight (optional)",
-  hintWeight:"From the listing or a kitchen scale. Real GaN bricks run roughly 1–2 g per watt.",
-  lblSteps:"Output steps printed on the label",
-  stepsOne:"Only 5V", stepsTwo:"Two (e.g. 5V and 9V)", stepsMany:"3 or more (5/9/15/20V…)", stepsUnknown:"Label not shown",
-  markSteps:"STEPS", markWeight:"WEIGHT",
-  fStepsOne:function(c){ return "The label lists only a 5V step. At 5V a charger tops out around 15W, so a claimed "+c+"W with PD fast charging cannot be delivered."; },
-  fStepsTwo:function(c){ return "Two steps such as 5V and 9V top out around 27W. A claimed "+c+"W needs a 15V or 20V step on the label."; },
-  fStepsTwoMild:function(c){ return "Two steps top out around 27W, and the claim is "+c+"W. Worth asking for a photo of the full label."; },
-  fStepsMany:"Several output steps are listed, which is what a real PD charger prints. Check that the top step matches the wattage claimed.",
-  fStepsOk:"The listed steps are enough for the wattage claimed.",
-  fStepsUnknown:"Output steps not visible, so the PD claim can’t be checked. Ask the seller for a clear photo of the full label.",
-  fWeightBad:function(g,c){ return g+"g is very light for a "+c+"W charger. A real power stage and its heat spreading need more material than that."; },
-  fWeightWarn:function(g,c){ return g+"g is on the light side for "+c+"W. Compact GaN exists, so compare with the brand’s official weight."; },
-  fWeightOk:function(g,c){ return g+"g is plausible for a "+c+"W charger."; },
-  fPWBad1:function(p,m,pct){ return "฿"+p+"/W is about "+pct+"% below a typical genuine-brand rate (~฿"+m+"/W). A real PD charger at this rating costs more to build."; },
-  fPWBad2:function(p,m){ return "฿"+p+"/W is far under the typical ~฿"+m+"/W for genuine chargers."; },
-  fPWWarn:function(p,m){ return "฿"+p+"/W is noticeably below the ~฿"+m+"/W baseline. Could be a sale, so check the seller."; },
-  fPWOk:function(p,m){ return "฿"+p+"/W is in line with typical genuine pricing (~฿"+m+"/W)."; },
-  fBrandCh:function(b){ return b+" makes real chargers, and fakes of well-known names are common. Judge the seller, not the logo."; },
-  noteFakeCh:"The label, price or build contradicts the fast-charging claim. Bricks like this can announce PD steps to your phone that the hardware can’t sustain, so expect the speed to collapse, the brick to overheat, or both. Don’t buy it. Chargers are also a shock and fire risk.",
-  noteSuspectCh:"Some details don’t line up. Before buying, ask the seller for a clear photo of the label showing every output step, plus the weight.",
-  noteCleanCh:"Claim, label and build details agree. When it arrives, put a USB-C power meter between the charger and your phone and check the volts and amps match the label.",
-  c1sum:"How a charger “negotiates” fast charging",
-  c1body:"<p>USB Power Delivery works like a handshake. The charger lists the voltage and current steps it offers, such as 9V/3A or 20V/3.25A, and the phone picks one. It only works if the charger is honest about that list.</p><ul><li>A cheap control chip can announce high steps while the transformer, capacitors and heat budget behind it are far too small.</li><li>The phone then shows a fast-charging icon, but current falls within minutes, the brick gets hot, or it cuts out under load.</li><li>A brick whose label shows only 5V cannot do PD above 15W, whatever the listing says.</li></ul>",
-  c2sum:"Reading the output steps on the label",
-  c2body:"<p>The label is where a manufacturer has to print real numbers. Multiply volts by amps for each step.</p><ul><li><code>9V × 2.22A ≈ 20W</code>, <code>15V × 3A = 45W</code>, <code>20V × 3.25A = 65W</code>, <code>20V × 5A = 100W</code>.</li><li>Above 45W the label needs a 20V step. PD steps below 20V stop at 3A.</li><li>A genuine PD brick usually prints several steps (5V, 9V, 15V, 20V). One line with a big number on the box is a mismatch.</li><li>Multi-port bricks advertise the total. The label shows what each port gives alone and in combination, so the single-port figure is lower.</li></ul>",
-  c3sum:"Weight and build tells",
-  c3body:"<ul><li>Weight is a rough guide. Real gallium-nitride bricks run about 1–2 g per rated watt, so a 65W brick under 40g has little inside it.</li><li>Ask the seller for the weight, or compare with the brand’s official product page.</li><li>Shake it. Loose rattling parts or a hollow feel are bad signs.</li><li>Look for a mOK (TISI) mark, a printed label with a model number you can search, and tidy seams around the housing.</li><li>Logo print and prong spacing on counterfeits of well-known brands often differ from official photos.</li></ul>",
-  c4sum:"What this tool can’t tell you",
-  c4body:"<p>This is a <b>pre-purchase heuristic</b>. It can’t see inside a charger you haven’t bought, and a convincing fake can print a convincing label.</p><p>When it arrives, plug a cheap USB-C power meter between the charger and your phone or laptop. The volts and amps it shows should match a step on the label and stay steady for 20 minutes under load. Unbranded chargers also carry shock and fire risk, so a certified source matters more than a few baht saved.</p>",
-  kickerCharger:"Reference rates are rough estimates for genuine-brand chargers · Not live prices"
-});
-Object.assign(T.th, {
-  tabCharger:"หัวชาร์จ",
-  titleCharger:"หัวชาร์จ <span class=\"strike\">65W</span> นั้น<br>ชาร์จเร็วจริง หรือแค่บอกว่าเร็ว?",
-  subCharger:"หัวชาร์จบางตัวบอกโทรศัพท์ว่าชาร์จเร็วผ่าน PD ได้ แต่ทำจริงไม่ได้ กรอก <b>ขั้นเอาต์พุตจริงตามฉลาก</b> แล้วเราจะเช็กว่าตัวเลขที่โฆษณาสมเหตุสมผลไหม",
-  cardTitleCharger:"รายละเอียดสินค้า — หัวชาร์จ",
-  hintMarketingWc:"เช่น “65W GaN ชาร์จเร็ว” ที่พิมพ์ตัวใหญ่บนกล่องหรือหัวข้อ",
-  lblRegMax:"ขั้นเอาต์พุตสูงสุดตามฉลาก",
-  hintRegMax:"ดูขั้นบนสุดในรายการเอาต์พุตบนฉลาก เช่น 20V⎓3.25A",
-  lblWeight:"น้ำหนัก (ไม่บังคับ)",
-  hintWeight:"จากประกาศขายหรือเครื่องชั่ง หัวชาร์จ GaN ของแท้หนักราว 1–2 กรัมต่อวัตต์",
-  lblSteps:"ขั้นเอาต์พุตที่พิมพ์บนฉลาก",
-  stepsOne:"มีแค่ 5V", stepsTwo:"สองขั้น (เช่น 5V กับ 9V)", stepsMany:"สามขั้นขึ้นไป (5/9/15/20V…)", stepsUnknown:"ไม่เห็นฉลาก",
-  markSteps:"ขั้นไฟ", markWeight:"น้ำหนัก",
-  fStepsOne:function(c){ return "ฉลากมีแค่ขั้น 5V ที่ 5V หัวชาร์จจ่ายได้สูงสุดราว 15W จึงไม่มีทางส่ง "+c+"W แบบ PD ที่โฆษณาได้"; },
-  fStepsTwo:function(c){ return "สองขั้นอย่าง 5V กับ 9V จ่ายได้สูงสุดราว 27W ที่โฆษณา "+c+"W ต้องมีขั้น 15V หรือ 20V บนฉลาก"; },
-  fStepsTwoMild:function(c){ return "สองขั้นจ่ายได้สูงสุดราว 27W ขณะที่โฆษณา "+c+"W ควรขอรูปฉลากเต็มจากผู้ขาย"; },
-  fStepsMany:"มีหลายขั้นเอาต์พุต ซึ่งเป็นสิ่งที่หัวชาร์จ PD แท้พิมพ์ไว้ ตรวจว่าขั้นบนสุดตรงกับวัตต์ที่โฆษณา",
-  fStepsOk:"ขั้นที่ระบุเพียงพอสำหรับวัตต์ที่โฆษณา",
-  fStepsUnknown:"ไม่เห็นขั้นเอาต์พุต จึงตรวจคำโฆษณา PD ไม่ได้ ลองขอรูปฉลากเต็มชัด ๆ จากผู้ขาย",
-  fWeightBad:function(g,c){ return g+" กรัม เบามากสำหรับหัวชาร์จ "+c+"W วงจรกำลังและการระบายความร้อนจริงต้องใช้วัสดุมากกว่านี้"; },
-  fWeightWarn:function(g,c){ return g+" กรัม ค่อนข้างเบาสำหรับ "+c+"W มี GaN ขนาดเล็กอยู่จริง ลองเทียบกับน้ำหนักทางการของแบรนด์"; },
-  fWeightOk:function(g,c){ return g+" กรัม สมเหตุสมผลสำหรับหัวชาร์จ "+c+"W"; },
-  fPWBad1:function(p,m,pct){ return "฿"+p+"/W ต่ำกว่าราคาทั่วไปของแบรนด์แท้ประมาณ "+pct+"% (~฿"+m+"/W) หัวชาร์จ PD ของจริงระดับนี้มีต้นทุนสูงกว่า"; },
-  fPWBad2:function(p,m){ return "฿"+p+"/W ต่ำกว่าราคาทั่วไป ~฿"+m+"/W ของหัวชาร์จแท้มาก"; },
-  fPWWarn:function(p,m){ return "฿"+p+"/W ต่ำกว่าราคาฐาน ~฿"+m+"/W อย่างเห็นได้ชัด อาจเป็นโปรโมชัน ควรตรวจสอบผู้ขาย"; },
-  fPWOk:function(p,m){ return "฿"+p+"/W สอดคล้องกับราคาของแท้ทั่วไป (~฿"+m+"/W)"; },
-  fBrandCh:function(b){ return b+" ผลิตหัวชาร์จจริง และของปลอมของแบรนด์ดังพบได้บ่อย ให้ดูที่ผู้ขาย ไม่ใช่โลโก้"; },
-  noteFakeCh:"ฉลาก ราคา หรือรูปแบบสินค้าขัดแย้งกับคำโฆษณาเรื่องชาร์จเร็ว หัวชาร์จแบบนี้อาจประกาศขั้น PD ให้โทรศัพท์ทั้งที่ฮาร์ดแวร์รับไม่ไหว ความเร็วอาจตกลงมา หัวร้อนจัด หรือเกิดทั้งสองอย่าง อย่าซื้อ หัวชาร์จยังเสี่ยงไฟดูดและไฟไหม้ด้วย",
-  noteSuspectCh:"มีบางจุดที่ไม่ตรงกัน ก่อนซื้อ ลองขอรูปฉลากที่เห็นทุกขั้นเอาต์พุตและน้ำหนักจากผู้ขาย",
-  noteCleanCh:"คำโฆษณา ฉลาก และรูปแบบสินค้าสอดคล้องกัน เมื่อได้รับของ ลองต่อเครื่องวัดกำลังไฟ USB-C ระหว่างหัวชาร์จกับโทรศัพท์ แล้วเช็กว่าโวลต์และแอมป์ตรงกับฉลาก",
-  c1sum:"หัวชาร์จ “ตกลง” เรื่องชาร์จเร็วอย่างไร",
-  c1body:"<p>USB Power Delivery ทำงานเหมือนการจับมือ หัวชาร์จแจ้งรายการขั้นแรงดันและกระแสที่ให้ได้ เช่น 9V/3A หรือ 20V/3.25A แล้วโทรศัพท์เลือกหนึ่งขั้น ใช้ได้ก็ต่อเมื่อหัวชาร์จบอกรายการตามจริง</p><ul><li>ชิปควบคุมราคาถูกประกาศขั้นสูงได้ ทั้งที่หม้อแปลง ตัวเก็บประจุ และการระบายความร้อนข้างหลังเล็กเกินไปมาก</li><li>โทรศัพท์จึงขึ้นไอคอนชาร์จเร็ว แต่กระแสตกภายในไม่กี่นาที หัวร้อน หรือตัดเมื่อโหลดหนัก</li><li>หัวที่ฉลากมีแค่ 5V ทำ PD เกิน 15W ไม่ได้ ไม่ว่าประกาศจะเขียนอย่างไร</li></ul>",
-  c2sum:"อ่านขั้นเอาต์พุตบนฉลาก",
-  c2body:"<p>ฉลากคือที่ที่ผู้ผลิตต้องพิมพ์ตัวเลขจริง ให้คูณโวลต์กับแอมป์ของแต่ละขั้น</p><ul><li><code>9V × 2.22A ≈ 20W</code>, <code>15V × 3A = 45W</code>, <code>20V × 3.25A = 65W</code>, <code>20V × 5A = 100W</code></li><li>เกิน 45W ฉลากต้องมีขั้น 20V ขั้น PD ที่ต่ำกว่า 20V จบที่ 3A</li><li>หัวชาร์จ PD แท้มักพิมพ์หลายขั้น (5V, 9V, 15V, 20V) บรรทัดเดียวกับตัวเลขใหญ่บนกล่องคือความไม่ตรงกัน</li><li>หัวหลายพอร์ตโฆษณากำลังรวม ฉลากจะบอกว่าแต่ละพอร์ตให้เท่าไรเมื่อใช้เดี่ยวและใช้พร้อมกัน ตัวเลขพอร์ตเดียวจึงต่ำกว่า</li></ul>",
-  c3sum:"น้ำหนักและร่องรอยของสินค้า",
-  c3body:"<ul><li>น้ำหนักเป็นเพียงแนวทางคร่าว ๆ หัวชาร์จแกลเลียมไนไตรด์ของแท้หนักราว 1–2 กรัมต่อวัตต์ หัว 65W ที่เบากว่า 40 กรัมแทบไม่มีอะไรข้างใน</li><li>ขอน้ำหนักจากผู้ขาย หรือเทียบกับหน้าสินค้าทางการของแบรนด์</li><li>ลองเขย่า ถ้ามีเสียงชิ้นส่วนหลวมหรือรู้สึกกลวง เป็นสัญญาณไม่ดี</li><li>ดูเครื่องหมาย มอก. ฉลากพิมพ์ที่มีเลขรุ่นให้ค้นหาได้ และรอยต่อตัวเครื่องที่เรียบร้อย</li><li>โลโก้และระยะขาปลั๊กของของปลอมแบรนด์ดังมักต่างจากรูปทางการ</li></ul>",
-  c4sum:"สิ่งที่เครื่องมือนี้บอกคุณไม่ได้",
-  c4body:"<p>นี่คือ <b>การตรวจสอบเชิงฮิวริสติกก่อนซื้อ</b> ไม่สามารถมองเข้าไปในหัวชาร์จที่ยังไม่ได้ซื้อ และของปลอมที่ทำดีก็พิมพ์ฉลากให้ดูน่าเชื่อได้</p><p>เมื่อได้รับของ ลองต่อเครื่องวัดกำลังไฟ USB-C ราคาถูกระหว่างหัวชาร์จกับโทรศัพท์หรือโน้ตบุ๊ก โวลต์และแอมป์ที่แสดงควรตรงกับหนึ่งขั้นบนฉลาก และนิ่งตลอด 20 นาทีขณะใช้งาน หัวชาร์จไม่มียี่ห้อยังเสี่ยงไฟดูดและไฟไหม้ แหล่งที่มีการรับรองจึงสำคัญกว่าเงินไม่กี่บาทที่ประหยัดได้</p>",
-  kickerCharger:"ราคาอ้างอิงเป็นค่าประมาณสำหรับหัวชาร์จแบรนด์แท้ · ไม่ใช่ราคาปัจจุบัน"
-});
-
-Object.assign(T.en, {
-  platTiktok:"TikTok Shop — regular seller",
-  platTikTokMall:"TikTok Shop Mall — official brand store",
-  fPlatMall:"TikTok Shop Mall stores are brand-verified, so this is close to an official storefront. Check that the store name and badge belong to the brand itself, not a reseller.",
-  fPlatRisky:function(p){ return p+" has weaker seller vetting than brand-verified storefronts, and counterfeit electronics are disproportionately common here."; }
-});
-Object.assign(T.th, {
-  platTiktok:"TikTok Shop — ร้านค้าทั่วไป",
-  platTikTokMall:"TikTok Shop Mall — ร้านแบรนด์ทางการ",
-  fPlatMall:"ร้านใน TikTok Shop Mall ผ่านการยืนยันแบรนด์ จึงใกล้เคียงร้านทางการ ตรวจว่าชื่อร้านและป้ายเป็นของแบรนด์เอง ไม่ใช่ผู้ขายต่อ",
-  fPlatRisky:function(p){ return p+" ตรวจสอบผู้ขายอ่อนกว่าร้านที่ยืนยันแบรนด์แล้ว และพบสินค้าอิเล็กทรอนิกส์ปลอมได้บ่อยที่นี่"; }
-});
-
-var P = {
-  lock:'M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z',
-  lockOpen:'M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z',
-  chev:'M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z',
-  check:'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
-  close:'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
-  excl:'M11 7h2v7h-2zm0 8h2v2h-2z',
-  vBad:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z',
-  vWarn:'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
-  vOk:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'
-};
-function svg(p){ return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="'+p+'"/></svg>'; }
-function $(id){ return document.getElementById(id); }
-function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
-
-var currentLang='en', currentTab='usb';
-
-/* ---------------- form scaffolding ---------------- */
-var PLATFORMS=[['official','platOfficial'],['tiktokmall','platTikTokMall'],['shopee','platShopee'],['lazada','platLazada'],['tiktok','platTiktok'],['fb','platFb'],['physical','platPhysical'],['other','platOther']];
-function fillPlatform(id,sel){
-  $(id).innerHTML=PLATFORMS.map(function(o){ return '<option value="'+o[0]+'"'+(o[0]===sel?' selected':'')+' data-i18n="'+o[1]+'"></option>'; }).join('');
-}
-fillPlatform('platformUsb','tiktok');
-fillPlatform('platformPower','shopee');
-
-function buildChips(id,name,legend,opts,checked){
-  var h='<legend data-i18n="'+legend+'"></legend><div class="chip-set">';
-  opts.forEach(function(o){
-    h+='<label class="chip"><input type="radio" name="'+name+'" value="'+o.v+'"'+(o.v===checked?' checked':'')+'><span class="chip-face"><span'+(o.k?' data-i18n="'+o.k+'"':'')+'>'+(o.t||'')+'</span></span></label>';
-  });
-  $(id).innerHTML=h+'</div>';
-}
-var RATINGS=[{v:'unknown',k:'ratUnknown'},{v:'new',k:'ratNew'},{v:'low',k:'ratLow'},{v:'good',k:'ratGood'}];
-buildChips('ratingUsbSet','ratingUsb','lblRating',RATINGS,'new');
-buildChips('ratingPowerSet','ratingPower','lblRating',RATINGS,'unknown');
-buildChips('stepsChargerSet','stepsCharger','lblSteps',[{v:'one',k:'stepsOne'},{v:'two',k:'stepsTwo'},{v:'many',k:'stepsMany'},{v:'unknown',k:'stepsUnknown'}],'two');
-buildChips('ratingChargerSet','ratingCharger','lblRating',RATINGS,'unknown');
-fillPlatform('platformCharger','shopee');
-buildChips('ifaceUsbSet','ifaceUsb','lblInterface',[{v:'usb2',t:'USB 2.0'},{v:'usb3',t:'USB 3.0 / 3.1 / 3.2'},{v:'typec',t:'USB-C'},{v:'dual',k:'ifaceDual'},{v:'unsure',k:'ifaceUnsure'}],'usb3');
-function radio(name){ var el=document.querySelector('input[name="'+name+'"]:checked'); return el?el.value:''; }
-
-/* ---------------- verdict drawer ---------------- */
-var PEEK=76;
-function sheetHTML(k1,k2){
-  return '<div class="pull" data-state="sealed" style="--p:0">'+
-    '<div class="pull-clip">'+
-      '<div class="pull-head"><span class="pull-ico" data-ico></span>'+
-        '<div class="pull-ht"><div class="pull-title" data-i18n="verdictHead"></div><div class="pull-sub" data-sub></div></div>'+
-        '<span class="pull-chip" data-chip></span></div>'+
-      '<div class="pull-body" data-body aria-hidden="true">'+
-        '<div class="vd"><span class="vd-ico" data-vico></span><div class="vd-text" data-vtext></div>'+
-          '<div class="vd-score"><span class="vd-num" data-num></span><span class="vd-of">/100</span><div class="vd-lbl" data-i18n="riskLabel"></div></div></div>'+
-        '<div class="stats"><div class="stat"><div class="lbl" data-i18n="'+k1+'"></div><div class="big" data-a></div></div>'+
-          '<div class="stat"><div class="lbl" data-i18n="'+k2+'"></div><div class="big" data-b></div></div></div>'+
-        '<div class="meter"><div class="fill" data-fill></div></div>'+
-        '<ul class="findings" data-list></ul>'+
-        '<p class="note" data-note></p>'+
-      '</div>'+
-    '</div>'+
-    '<button type="button" class="pull-tab" data-tab aria-expanded="false">'+svg(P.chev)+'</button>'+
-  '</div>';
-}
-
-function Sheet(mount,k1,k2){
-  var self=this;
-  mount.innerHTML=sheetHTML(k1,k2);
-  this.root=mount.querySelector('.pull');
-  var q=function(s){ return self.root.querySelector('['+s+']'); };
-  this.clip=this.root.querySelector('.pull-clip');
-  this.body=q('data-body'); this.tab=q('data-tab'); this.ico=q('data-ico');
-  this.sub=q('data-sub'); this.chip=q('data-chip'); this.vico=q('data-vico');
-  this.vtext=q('data-vtext'); this.num=q('data-num'); this.a=q('data-a'); this.b=q('data-b');
-  this.fill=q('data-fill'); this.list=q('data-list'); this.note=q('data-note');
-  this.open=false; this.p=0; this.data=null; this.drag=null;
-
-  this.ro=new ResizeObserver(function(){ if(!self.drag) self.render(self.p,false); });
-  this.ro.observe(this.body);
-
-  this.tab.addEventListener('pointerdown',function(e){
-    if(e.pointerType==='mouse' && e.button!==0) return;
-    try{ self.tab.setPointerCapture(e.pointerId); }catch(_){}
-    var now=performance.now();
-    self.drag={y:e.clientY,p0:self.p,moved:false,lastY:e.clientY,lastT:now,v:0};
-    self.root.classList.add('dragging');
-  });
-  this.tab.addEventListener('pointermove',function(e){
-    var d=self.drag; if(!d) return;
-    var dy=e.clientY-d.y;
-    if(Math.abs(dy)>4) d.moved=true;
-    var now=performance.now(), dt=Math.max(1,now-d.lastT);
-    d.v=0.7*d.v+0.3*((e.clientY-d.lastY)/dt);
-    d.lastY=e.clientY; d.lastT=now;
-    if(d.moved){
-      var h=Math.max(1,self.bodyH());
-      self.render(clamp(d.p0+dy/h,0,1),false);
-    }
-  });
-  var end=function(e){
-    var d=self.drag; if(!d) return;
-    self.drag=null; self.root.classList.remove('dragging');
-    try{ self.tab.releasePointerCapture(e.pointerId); }catch(_){}
-    if(e.type==='pointercancel'){ self.setOpen(self.open,true); return; }
-    if(!d.moved){ self.setOpen(!self.open,true); return; }
-    var want;
-    if(d.v>0.4) want=true;
-    else if(d.v<-0.4) want=false;
-    else want = d.p0===0 ? self.p>0.2 : self.p>0.8;
-    self.setOpen(want,true);
-  };
-  this.tab.addEventListener('pointerup',end);
-  this.tab.addEventListener('pointercancel',end);
-  this.tab.addEventListener('click',function(e){ if(e.detail===0) self.setOpen(!self.open,true); });
-  this.tab.addEventListener('keydown',function(e){
-    if(e.key==='ArrowDown'){ e.preventDefault(); self.setOpen(true,true); }
-    else if(e.key==='ArrowUp'){ e.preventDefault(); self.setOpen(false,true); }
-  });
-}
-Sheet.prototype.bodyH=function(){ return this.body.offsetHeight; };
-Sheet.prototype.render=function(p,anim){
-  this.p=p;
-  this.clip.style.transition=anim?'':'none';
-  this.body.style.transition=anim?'':'none';
-  this.clip.style.height=(PEEK+p*this.bodyH())+'px';
-  this.body.style.opacity = p<=0.04 ? 0 : Math.min(1,(p-0.04)/0.4);
-  this.root.style.setProperty('--p',p);
-  this.root.classList.toggle('tone-on',p>0.45);
-};
-Sheet.prototype.updateHead=function(){
-  var t=T[currentLang];
-  this.sub.textContent=this.open?t.openSub:t.pullHint;
-  this.chip.textContent=this.open?t.revealed:t.sealed;
-  this.ico.innerHTML=svg(this.open?P.lockOpen:P.lock);
-  this.tab.setAttribute('aria-label',this.open?t.closeAria:t.pullAria);
-  this.body.setAttribute('aria-hidden',this.open?'false':'true');
-};
-Sheet.prototype.setOpen=function(o,anim){
-  var was=this.open, self=this;
-  this.open=o;
-  this.root.dataset.state=o?'open':'sealed';
-  this.tab.setAttribute('aria-expanded',String(o));
-  this.render(o?1:0,anim);
-  this.updateHead();
-  if(this.data) this.fill.style.width=o?this.data.risk+'%':'0%';
-  if(o && !was){
-    this.vico.classList.remove('stamp'); void this.vico.offsetWidth; this.vico.classList.add('stamp');
-    if(anim) setTimeout(function(){ self.root.scrollIntoView({behavior:'smooth',block:'nearest'}); },520);
-  }
-};
-Sheet.prototype.nudge=function(){
-  var tb=this.tab; tb.classList.remove('nudge'); void tb.offsetWidth; tb.classList.add('nudge');
-  setTimeout(function(){ tb.classList.remove('nudge'); },1800);
-};
-var ICON_F={bad:P.close,warn:P.excl,ok:P.check};
-var ICON_V={bad:P.vBad,warn:P.vWarn,ok:P.vOk};
-Sheet.prototype.set=function(d,keep){
-  var t=T[currentLang];
-  this.data=d;
-  this.root.classList.remove('tone-bad','tone-warn','tone-ok');
-  this.root.classList.add('tone-'+d.tone);
-  this.vico.innerHTML=svg(ICON_V[d.tone]);
-  this.vtext.textContent=d.verdict;
-  this.num.textContent=Math.round(d.risk);
-  this.a.textContent=d.a; this.b.textContent=d.b;
-  this.note.textContent=d.note;
-  this.list.innerHTML='';
-  d.findings.forEach(function(f,i){
-    var li=document.createElement('li');
-    li.className='finding '+f.type; li.style.setProperty('--i',i);
-    li.innerHTML='<span class="f-ico">'+svg(ICON_F[f.type])+'</span><span><span class="f-mark"></span><span class="f-txt"></span></span>';
-    li.querySelector('.f-mark').textContent=f.mark;
-    li.querySelector('.f-txt').textContent=f.text;
-    this.list.appendChild(li);
-  },this);
-  if(keep && this.open){ this.fill.style.width=d.risk+'%'; this.render(1,false); this.updateHead(); }
-  else{ this.fill.style.width='0%'; this.open=false; this.root.dataset.state='sealed'; this.tab.setAttribute('aria-expanded','false'); this.render(0,false); this.updateHead(); }
-};
-
-var sheetUsb=new Sheet($('mountUsb'),'lblPerGb','lblVsMarket');
-var sheetPower=new Sheet($('mountPower'),'lblRealW','lblVsClaim');
-var sheetCharger=new Sheet($('mountCharger'),'lblRealW','lblVsClaim');
-
-/* ---------------- flash drive logic ---------------- */
-var usbBaseline=[{maxGb:32,rate:8.0},{maxGb:64,rate:5.6},{maxGb:128,rate:4.0},{maxGb:256,rate:2.9},{maxGb:512,rate:2.7},{maxGb:1024,rate:2.6},{maxGb:999999,rate:2.5}];
-function getUsbRate(gb){ for(var i=0;i<usbBaseline.length;i++){ if(gb<=usbBaseline[i].maxGb) return usbBaseline[i].rate; } return usbBaseline[usbBaseline.length-1].rate; }
-function gbLabel(gb){ return gb>=1024?(gb/1024)+'TB':gb+'GB'; }
-var brandNamesUsb={sandisk:'SanDisk',kingston:'Kingston',samsung:'Samsung',lexar:'Lexar',transcend:'Transcend',adata:'ADATA',hp:'HP',sony:'Sony',toshiba:'Toshiba'};
-var brandNamesPower={anker:'Anker',xiaomi:'Xiaomi',baseus:'Baseus',romoss:'Romoss',ugreen:'UGREEN',hp:'HP'};
-
-function platLabel(platform){
-  return platform==='tiktok' ? (currentLang==='th'?'ร้านทั่วไปบน TikTok Shop':'TikTok Shop regular sellers')
-    : platform==='fb' ? (currentLang==='th'?'Facebook Marketplace/กลุ่ม':'Facebook Marketplace/groups')
-    : (currentLang==='th'?'แหล่งนี้':'This source');
-}
-function toneOf(risk){ return risk>=55?'bad':risk>=25?'warn':'ok'; }
-
-function readUsb(){
-  var price=parseFloat($('priceUsb').value);
-  if(!price||price<=0) return null;
-  return {price:price,gb:parseFloat($('capacityUsb').value),brand:$('brandUsb').value,platform:$('platformUsb').value,rating:radio('ratingUsb'),iface:radio('ifaceUsb')};
-}
-function calcUsb(s){
-  var t=T[currentLang], risk=0, f=[];
-  var ppg=s.price/s.gb, mr=getUsbRate(s.gb), ratio=ppg/mr;
-  if(ratio<0.15){ risk+=45; f.push({type:'bad',mark:t.markPrice,text:t.fPriceBad1(ppg.toFixed(2),mr.toFixed(2),Math.round((1-ratio)*100))}); }
-  else if(ratio<0.4){ risk+=28; f.push({type:'bad',mark:t.markPrice,text:t.fPriceBad2(ppg.toFixed(2),mr.toFixed(2))}); }
-  else if(ratio<0.7){ risk+=12; f.push({type:'warn',mark:t.markPrice,text:t.fPriceWarn(ppg.toFixed(2),mr.toFixed(2))}); }
-  else{ f.push({type:'ok',mark:t.markPrice,text:t.fPriceOk(ppg.toFixed(2),mr.toFixed(2))}); }
-
-  if(s.brand==='hp'){ risk+=30; f.push({type:'bad',mark:t.markBrand,text:t.fBrandHp}); }
-  else if(s.brand==='generic'||s.brand==='other'){ risk+=14; f.push({type:'warn',mark:t.markBrand,text:t.fBrandGeneric}); }
-  else{ f.push({type:'ok',mark:t.markBrand,text:t.fBrandOk(brandNamesUsb[s.brand]||s.brand)}); }
-
-  if(s.platform==='tiktok'||s.platform==='fb'||s.platform==='other'){ risk+=14; f.push({type:'warn',mark:t.markPlatform,text:t.fPlatRisky(platLabel(s.platform))}); }
-  else if(s.platform==='tiktokmall'){ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatMall}); }
-  else if(s.platform==='official'){ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatOfficial}); }
-  else{ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatRegular}); }
-
-  if(s.rating==='new'){ risk+=10; f.push({type:'warn',mark:t.markSeller,text:t.fSellerNew}); }
-  else if(s.rating==='low'){ risk+=16; f.push({type:'bad',mark:t.markSeller,text:t.fSellerLow}); }
-  else if(s.rating==='unknown'){ risk+=6; }
-
-  if(s.iface==='usb2' && s.gb>=512){ risk+=8; f.push({type:'warn',mark:t.markSpecs,text:t.fSpecsUsb2(gbLabel(s.gb))}); }
-  if(s.gb>=2048){ risk+=10; f.push({type:'warn',mark:t.markCapacity,text:t.fCapExtreme(gbLabel(s.gb))}); }
-
-  risk=Math.min(100,risk);
-  var tone=toneOf(risk);
-  return {
-    risk:risk, tone:tone, findings:f,
-    verdict: tone==='bad'?t.stampFake:tone==='warn'?t.stampSuspect:t.stampClean,
-    a:'฿'+ppg.toFixed(2),
-    b: ratio<1 ? Math.round((1-ratio)*100)+t.below : Math.round((ratio-1)*100)+t.above,
-    note: tone==='bad'?t.noteFakeUsb:tone==='warn'?t.noteSuspectUsb:t.noteCleanUsb
-  };
-}
-
-/* ---------------- power bank logic ---------------- */
-var powerBaseline=[{maxMah:10000,rate:0.09},{maxMah:20000,rate:0.075},{maxMah:30000,rate:0.065},{maxMah:50000,rate:0.06},{maxMah:9999999,rate:0.055}];
-function getPowerRate(mah){ for(var i=0;i<powerBaseline.length;i++){ if(mah<=powerBaseline[i].maxMah) return powerBaseline[i].rate; } return powerBaseline[powerBaseline.length-1].rate; }
-
-function readPower(){
-  var price=parseFloat($('pricePower').value);
-  if(!price||price<=0) return null;
-  return {
-    price:price,
-    mah:parseFloat($('capacityPower').value)||0,
-    claimW:parseFloat($('marketingWatt').value)||0,
-    regV:parseFloat($('regVoltage').value)||0,
-    regA:parseFloat($('regCurrent').value)||0,
-    brand:$('brandPower').value, platform:$('platformPower').value, rating:radio('ratingPower')
-  };
-}
-function calcPower(s){
-  var t=T[currentLang], risk=0, f=[];
-  var realW=s.regV*s.regA, claimW=s.claimW;
-  if(claimW>0 && realW>0){
-    var wr=claimW/realW;
-    if(wr>=2.2){ risk+=35; f.push({type:'bad',mark:t.markWatt,text:t.fWattBad(claimW,realW.toFixed(1))}); }
-    else if(wr>=1.4){ risk+=16; f.push({type:'warn',mark:t.markWatt,text:t.fWattWarn(claimW,realW.toFixed(1))}); }
-    else{ f.push({type:'ok',mark:t.markWatt,text:t.fWattOk(claimW,realW.toFixed(1))}); }
-  } else if(claimW>0){
-    risk+=10; f.push({type:'warn',mark:t.markWatt,text:t.fWattMissing});
-  }
-  if(s.mah>0){
-    var ppm=s.price/s.mah, mr=getPowerRate(s.mah), ratio=ppm/mr;
-    if(ratio<0.25){ risk+=30; f.push({type:'bad',mark:t.markCapacity,text:t.fCapPowerBad1(ppm.toFixed(3),mr.toFixed(3),Math.round((1-ratio)*100))}); }
-    else if(ratio<0.55){ risk+=14; f.push({type:'warn',mark:t.markCapacity,text:t.fCapPowerWarn(ppm.toFixed(3),mr.toFixed(3))}); }
-    else{ f.push({type:'ok',mark:t.markCapacity,text:t.fCapPowerOk(ppm.toFixed(3),mr.toFixed(3))}); }
-  }
-  if(s.brand==='hp'){ risk+=25; f.push({type:'bad',mark:t.markBrand,text:t.fBrandPowerHp}); }
-  else if(s.brand==='generic'||s.brand==='other'){ risk+=12; f.push({type:'warn',mark:t.markBrand,text:t.fBrandGeneric}); }
-  else{ f.push({type:'ok',mark:t.markBrand,text:t.fBrandOk(brandNamesPower[s.brand]||s.brand)}); }
-
-  if(s.platform==='tiktok'||s.platform==='fb'||s.platform==='other'){ risk+=14; f.push({type:'warn',mark:t.markPlatform,text:t.fPlatRisky(platLabel(s.platform))}); }
-  else if(s.platform==='tiktokmall'){ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatMall}); }
-  else if(s.platform==='official'){ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatOfficial}); }
-  else{ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatRegular}); }
-
-  if(s.rating==='new'){ risk+=10; f.push({type:'warn',mark:t.markSeller,text:t.fSellerNew}); }
-  else if(s.rating==='low'){ risk+=16; f.push({type:'bad',mark:t.markSeller,text:t.fSellerLow}); }
-  else if(s.rating==='unknown'){ risk+=6; }
-
-  risk=Math.min(100,risk);
-  var tone=toneOf(risk);
-  return {
-    risk:risk, tone:tone, findings:f,
-    verdict: tone==='bad'?t.stampFake:tone==='warn'?t.stampSuspect:t.stampClean,
-    a: realW>0 ? realW.toFixed(1)+'W' : '—',
-    b: (claimW>0 && realW>0) ? (claimW>=realW ? '+'+Math.round(((claimW/realW)-1)*100)+'%' : Math.round((1-(claimW/realW))*100)+t.below) : '—',
-    note: tone==='bad'?t.noteFakePower:tone==='warn'?t.noteSuspectPower:t.noteCleanPower
-  };
-}
-
-/* ---------------- charger logic ---------------- */
-var chargerRates=[{maxW:20,rate:12},{maxW:35,rate:12},{maxW:70,rate:12},{maxW:100,rate:13},{maxW:99999,rate:14}];
-function getChargerRate(w){ for(var i=0;i<chargerRates.length;i++){ if(w<=chargerRates[i].maxW) return chargerRates[i].rate; } return 14; }
-var brandNamesCh={apple:'Apple',samsung:'Samsung',anker:'Anker',baseus:'Baseus',ugreen:'UGREEN',xiaomi:'Xiaomi',belkin:'Belkin'};
-
-function readCharger(){
-  var price=parseFloat($('priceCharger').value);
-  if(!price||price<=0) return null;
-  return {
-    price:price,
-    claimW:parseFloat($('wattCharger').value)||0,
-    regV:parseFloat($('regVoltageC').value)||0,
-    regA:parseFloat($('regCurrentC').value)||0,
-    weight:parseFloat($('weightCharger').value)||0,
-    brand:$('brandCharger').value, platform:$('platformCharger').value,
-    steps:radio('stepsCharger'), rating:radio('ratingCharger')
-  };
-}
-function calcCharger(s){
-  var t=T[currentLang], risk=0, f=[];
-  var realW=s.regV*s.regA, claimW=s.claimW, cw=claimW>0?claimW:realW;
-  if(claimW>0 && realW>0){
-    var wr=claimW/realW;
-    if(wr>=2.2){ risk+=35; f.push({type:'bad',mark:t.markWatt,text:t.fWattBad(claimW,realW.toFixed(1))}); }
-    else if(wr>=1.4){ risk+=16; f.push({type:'warn',mark:t.markWatt,text:t.fWattWarn(claimW,realW.toFixed(1))}); }
-    else{ f.push({type:'ok',mark:t.markWatt,text:t.fWattOk(claimW,realW.toFixed(1))}); }
-  } else if(claimW>0){
-    risk+=10; f.push({type:'warn',mark:t.markWatt,text:t.fWattMissing});
-  }
-  if(s.steps==='unknown'){ risk+=8; f.push({type:'warn',mark:t.markSteps,text:t.fStepsUnknown}); }
-  else if(s.steps==='one'){
-    if(cw>=18){ risk+=30; f.push({type:'bad',mark:t.markSteps,text:t.fStepsOne(cw)}); }
-    else{ f.push({type:'ok',mark:t.markSteps,text:t.fStepsOk}); }
-  }
-  else if(s.steps==='two'){
-    if(cw>=45){ risk+=22; f.push({type:'bad',mark:t.markSteps,text:t.fStepsTwo(cw)}); }
-    else if(cw>27){ risk+=12; f.push({type:'warn',mark:t.markSteps,text:t.fStepsTwoMild(cw)}); }
-    else{ f.push({type:'ok',mark:t.markSteps,text:t.fStepsOk}); }
-  }
-  else{ f.push({type:'ok',mark:t.markSteps,text:t.fStepsMany}); }
-
-  if(s.weight>0 && cw>=20){
-    var gpw=s.weight/cw;
-    if(gpw<0.6){ risk+=20; f.push({type:'bad',mark:t.markWeight,text:t.fWeightBad(s.weight,cw)}); }
-    else if(gpw<1.0){ risk+=10; f.push({type:'warn',mark:t.markWeight,text:t.fWeightWarn(s.weight,cw)}); }
-    else{ f.push({type:'ok',mark:t.markWeight,text:t.fWeightOk(s.weight,cw)}); }
-  }
-  if(cw>0){
-    var ppw=s.price/cw, mr=getChargerRate(cw), ratio=ppw/mr;
-    if(ratio<0.15){ risk+=35; f.push({type:'bad',mark:t.markPrice,text:t.fPWBad1(ppw.toFixed(2),mr.toFixed(2),Math.round((1-ratio)*100))}); }
-    else if(ratio<0.4){ risk+=22; f.push({type:'bad',mark:t.markPrice,text:t.fPWBad2(ppw.toFixed(2),mr.toFixed(2))}); }
-    else if(ratio<0.7){ risk+=10; f.push({type:'warn',mark:t.markPrice,text:t.fPWWarn(ppw.toFixed(2),mr.toFixed(2))}); }
-    else{ f.push({type:'ok',mark:t.markPrice,text:t.fPWOk(ppw.toFixed(2),mr.toFixed(2))}); }
-  }
-  if(s.brand==='generic'||s.brand==='other'){ risk+=12; f.push({type:'warn',mark:t.markBrand,text:t.fBrandGeneric}); }
-  else{ f.push({type:'ok',mark:t.markBrand,text:t.fBrandCh(brandNamesCh[s.brand]||s.brand)}); }
-
-  if(s.platform==='tiktok'||s.platform==='fb'||s.platform==='other'){ risk+=14; f.push({type:'warn',mark:t.markPlatform,text:t.fPlatRisky(platLabel(s.platform))}); }
-  else if(s.platform==='tiktokmall'){ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatMall}); }
-  else if(s.platform==='official'){ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatOfficial}); }
-  else{ f.push({type:'ok',mark:t.markPlatform,text:t.fPlatRegular}); }
-
-  if(s.rating==='new'){ risk+=10; f.push({type:'warn',mark:t.markSeller,text:t.fSellerNew}); }
-  else if(s.rating==='low'){ risk+=16; f.push({type:'bad',mark:t.markSeller,text:t.fSellerLow}); }
-  else if(s.rating==='unknown'){ risk+=6; }
-
-  risk=Math.min(100,risk);
-  var tone=toneOf(risk);
-  return {
-    risk:risk, tone:tone, findings:f,
-    verdict: tone==='bad'?t.stampFake:tone==='warn'?t.stampSuspect:t.stampClean,
-    a: realW>0 ? realW.toFixed(1)+'W' : '—',
-    b: (claimW>0 && realW>0) ? (claimW>=realW ? '+'+Math.round(((claimW/realW)-1)*100)+'%' : Math.round((1-(claimW/realW))*100)+t.below) : '—',
-    note: tone==='bad'?t.noteFakeCh:tone==='warn'?t.noteSuspectCh:t.noteCleanCh
-  };
-}
-
-/* ---------------- wiring ---------------- */
-var snap={usb:null,power:null,charger:null};
-
-function setErr(id,helpId,on){
-  var box=$(id), help=$(helpId);
-  box.classList.toggle('err',on);
-  help.hidden=!on;
-  if(on) help.textContent=T[currentLang].errPrice;
-}
-var KIND={
-  usb:{read:readUsb,calc:calcUsb,sheet:sheetUsb,cap:'Usb'},
-  power:{read:readPower,calc:calcPower,sheet:sheetPower,cap:'Power'},
-  charger:{read:readCharger,calc:calcCharger,sheet:sheetCharger,cap:'Charger'}
-};
-function submitFor(kind){
-  var K=KIND[kind], read=K.read, calc=K.calc, sheet=K.sheet, cap=K.cap;
-  var s=read();
-  if(!s){ setErr('tfPrice'+cap,'helpPrice'+cap,true); $('price'+cap).focus(); return; }
-  setErr('tfPrice'+cap,'helpPrice'+cap,false);
-  snap[kind]=s;
-  sheet.set(calc(s),false);
-  sheet.nudge();
-  $('mount'+cap).scrollIntoView({behavior:'smooth',block:'center'});
-}
-$('intakeUsb').addEventListener('submit',function(e){ e.preventDefault(); submitFor('usb'); });
-$('intakePower').addEventListener('submit',function(e){ e.preventDefault(); submitFor('power'); });
-$('intakeCharger').addEventListener('submit',function(e){ e.preventDefault(); submitFor('charger'); });
-
-[['intakeUsb','exUsb','Usb'],['intakePower','exPower','Power'],['intakeCharger','exCharger','Charger']].forEach(function(x){
-  $(x[0]).addEventListener('input',function(){
-    $(x[1]).classList.add('gone');
-    if($('price'+x[2]).value) setErr('tfPrice'+x[2],'helpPrice'+x[2],false);
-  });
-  $(x[0]).addEventListener('change',function(){ $(x[1]).classList.add('gone'); });
-});
-
-function updateReg(){
-  var v=parseFloat($('regVoltage').value)||0, a=parseFloat($('regCurrent').value)||0;
-  var w=v*a;
-  $('regCalc').textContent='= '+(w>0?(Math.round(w*10)/10):0)+' W';
-}
-$('regVoltage').addEventListener('input',updateReg);
-$('regCurrent').addEventListener('input',updateReg);
-function updateRegC(){
-  var v=parseFloat($('regVoltageC').value)||0, a=parseFloat($('regCurrentC').value)||0;
-  var w=v*a;
-  $('regCalcC').textContent='= '+(w>0?(Math.round(w*10)/10):0)+' W';
-}
-$('regVoltageC').addEventListener('input',updateRegC);
-$('regCurrentC').addEventListener('input',updateRegC);
-
-document.querySelectorAll('.btn').forEach(function(b){
-  b.addEventListener('pointerdown',function(e){
-    var r=b.getBoundingClientRect(), s=Math.max(r.width,r.height)*2;
-    var d=document.createElement('span'); d.className='ripple';
-    d.style.cssText='width:'+s+'px;height:'+s+'px;left:'+(e.clientX-r.left-s/2)+'px;top:'+(e.clientY-r.top-s/2)+'px';
-    b.appendChild(d); setTimeout(function(){ d.remove(); },650);
-  });
-});
-
-/* ---------------- custom material dropdown ---------------- */
-var selects=[];
-function CustomSelect(sel){
-  var self=this;
-  this.sel=sel; this.tf=sel.closest('.tf'); this.wrap=sel.parentNode;
-  this.label=this.tf.querySelector('.tf-label');
-  this.isOpen=false; this.act=-1; this.buf=''; this.bufT=0;
-  var id=sel.id;
-  sel.classList.add('native'); sel.tabIndex=-1; sel.setAttribute('aria-hidden','true');
-  if(!this.label.id) this.label.id=id+'Lbl';
-  var btn=document.createElement('button');
-  btn.type='button'; btn.className='dd-btn'; btn.id=id+'Btn';
-  btn.setAttribute('role','combobox'); btn.setAttribute('aria-haspopup','listbox');
-  btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-controls',id+'Menu');
-  btn.setAttribute('aria-labelledby',this.label.id+' '+btn.id);
-  var menu=document.createElement('ul');
-  menu.className='dd-menu'; menu.id=id+'Menu'; menu.tabIndex=-1;
-  menu.setAttribute('role','listbox'); menu.setAttribute('aria-labelledby',this.label.id);
-  this.wrap.appendChild(btn); this.tf.appendChild(menu);
-  this.btn=btn; this.menu=menu;
-
-  sel.addEventListener('focus',function(){ btn.focus(); });
-  btn.addEventListener('click',function(e){
-    if(e.detail===0) return;
-    if(self.isOpen) self.close(); else self.openMenu();
-  });
-  btn.addEventListener('keydown',function(e){ self.key(e); });
-  menu.addEventListener('mousedown',function(e){ e.preventDefault(); });
-  menu.addEventListener('click',function(e){
-    var li=e.target.closest('.dd-item'); if(li) self.choose(parseInt(li.getAttribute('data-i'),10));
-  });
-  menu.addEventListener('pointermove',function(e){
-    var li=e.target.closest('.dd-item');
-    if(li){ var i=parseInt(li.getAttribute('data-i'),10); if(i!==self.act) self.setActive(i,false); }
-  });
-  this.refresh();
-}
-CustomSelect.prototype.refresh=function(){
-  var o=this.sel.options[this.sel.selectedIndex];
-  this.btn.textContent=o?o.textContent:'';
-};
-CustomSelect.prototype.build=function(){
-  var self=this, h='';
-  Array.prototype.forEach.call(this.sel.options,function(o,i){
-    var s=i===self.sel.selectedIndex;
-    h+='<li class="dd-item" role="option" id="'+self.sel.id+'O'+i+'" data-i="'+i+'" aria-selected="'+s+'" style="--i:'+i+'"><span></span>'+svg(P.check)+'</li>';
-  });
-  this.menu.innerHTML=h;
-  Array.prototype.forEach.call(this.menu.children,function(li,i){ li.firstChild.textContent=self.sel.options[i].textContent; });
-};
-CustomSelect.prototype.openMenu=function(){
-  selects.forEach(function(s){ if(s!==this && s.isOpen) s.close(); },this);
-  this.build();
-  var r=this.tf.getBoundingClientRect(), vh=window.innerHeight;
-  var below=vh-r.bottom-12, above=r.top-110-12;
-  var need=Math.min(320,this.sel.options.length*48+16);
-  var up=below<need && above>below;
-  this.menu.classList.toggle('up',up);
-  this.menu.style.maxHeight=Math.max(160,Math.min(320,up?above:below))+'px';
-  this.isOpen=true;
-  this.wrap.classList.add('open');
-  this.btn.setAttribute('aria-expanded','true');
-  this.menu.classList.add('show');
-  this.setActive(this.sel.selectedIndex,true,true);
-};
-CustomSelect.prototype.close=function(){
-  if(!this.isOpen) return;
-  this.isOpen=false;
-  this.wrap.classList.remove('open');
-  this.menu.classList.remove('show');
-  this.btn.setAttribute('aria-expanded','false');
-  this.btn.removeAttribute('aria-activedescendant');
-};
-CustomSelect.prototype.setActive=function(i,scroll,center){
-  var items=this.menu.children;
-  if(!items.length) return;
-  i=clamp(i,0,items.length-1);
-  if(this.act>=0 && items[this.act]) items[this.act].classList.remove('act');
-  this.act=i;
-  var li=items[i];
-  li.classList.add('act');
-  this.btn.setAttribute('aria-activedescendant',li.id);
-  if(center){
-    this.menu.scrollTop=li.offsetTop-this.menu.clientHeight/2+li.offsetHeight/2;
-  } else if(scroll!==false){
-    var m=this.menu, top=li.offsetTop, bot=top+li.offsetHeight;
-    if(top<m.scrollTop+8) m.scrollTop=top-8;
-    else if(bot>m.scrollTop+m.clientHeight-8) m.scrollTop=bot-m.clientHeight+8;
-  }
-};
-CustomSelect.prototype.choose=function(i){
-  var changed=this.sel.selectedIndex!==i;
-  this.sel.selectedIndex=i;
-  this.refresh();
-  this.close();
-  if(changed){
-    this.sel.dispatchEvent(new Event('input',{bubbles:true}));
-    this.sel.dispatchEvent(new Event('change',{bubbles:true}));
-  }
-};
-CustomSelect.prototype.key=function(e){
-  var n=this.sel.options.length, k=e.key;
-  if(!this.isOpen){
-    if(k==='ArrowDown'||k==='ArrowUp'||k==='Enter'||k===' '){ e.preventDefault(); this.openMenu(); }
-    return;
-  }
-  if(k==='ArrowDown'){ e.preventDefault(); this.setActive(Math.min(n-1,this.act+1)); }
-  else if(k==='ArrowUp'){ e.preventDefault(); this.setActive(Math.max(0,this.act-1)); }
-  else if(k==='Home'){ e.preventDefault(); this.setActive(0); }
-  else if(k==='End'){ e.preventDefault(); this.setActive(n-1); }
-  else if(k==='Enter'||k===' '){ e.preventDefault(); this.choose(this.act); }
-  else if(k==='Escape'){ e.preventDefault(); this.close(); }
-  else if(k==='Tab'){ this.close(); }
-  else if(k.length===1 && /\S/.test(k)){
-    var now=Date.now();
-    this.buf = (now-this.bufT>600 ? '' : this.buf)+k.toLowerCase();
-    this.bufT=now;
-    for(var j=1;j<=n;j++){
-      var idx=(this.act+j)%n;
-      if(this.sel.options[idx].textContent.toLowerCase().indexOf(this.buf)===0){ this.setActive(idx); break; }
-    }
-  }
-};
-document.querySelectorAll('.tf-row.sel select').forEach(function(s){ selects.push(new CustomSelect(s)); });
-function refreshSelects(){ selects.forEach(function(s){ s.refresh(); }); }
-function closeAllSelects(){ selects.forEach(function(s){ s.close(); }); }
-document.addEventListener('pointerdown',function(e){
-  selects.forEach(function(s){ if(s.isOpen && !s.tf.contains(e.target)) s.close(); });
-});
-
-/* ---------------- animated notes ---------------- */
-var EASE='cubic-bezier(.2,0,0,1)';
-var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
-function stagger(d){
-  d.querySelectorAll('.body > p, .body li').forEach(function(el,i){ el.style.setProperty('--k',i); });
-}
-function toggleDetails(d,want){
-  var sum=d.querySelector('summary');
-  var cur=d.offsetHeight;
-  if(d._a){ d._a.onfinish=null; d._a.cancel(); d._a=null; }
-  d.style.overflow='hidden';
-  var end;
-  if(want){ d.open=true; d.classList.add('is-open'); stagger(d); end=d.offsetHeight; }
-  else{ d.classList.remove('is-open'); end=sum.offsetHeight; }
-  var a=d.animate({height:[cur+'px',end+'px']},{duration:want?440:300,easing:EASE});
-  d._a=a;
-  a.onfinish=function(){ d._a=null; d.style.overflow=''; if(!want) d.open=false; };
-}
-document.querySelectorAll('details').forEach(function(d){
-  d.querySelector('summary').addEventListener('click',function(e){
-    e.preventDefault();
-    var want=!d.classList.contains('is-open');
-    if(reduce.matches){ d.open=want; d.classList.toggle('is-open',want); if(want) stagger(d); return; }
-    toggleDetails(d,want);
-  });
-});
-if('IntersectionObserver' in window && !reduce.matches){
-  var io=new IntersectionObserver(function(entries){
-    var n=0;
-    entries.forEach(function(en){
-      if(!en.isIntersecting) return;
-      io.unobserve(en.target);
-      en.target.animate([{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'none'}],{duration:520,delay:n*80,easing:EASE,fill:'backwards'});
-      n++;
-    });
-  },{threshold:0.2});
-  document.querySelectorAll('.evidence .sec-label, .evidence details').forEach(function(el){ io.observe(el); });
-}
-
-/* ---------------- language + tabs ---------------- */
-var CAP={usb:'Usb',power:'Power',charger:'Charger'};
-function heroFor(tab){ var t=T[currentLang]; $('heroTitle').innerHTML=t['title'+CAP[tab]]; $('heroSub').innerHTML=t['sub'+CAP[tab]]; }
-function applyLang(lang){
-  currentLang=lang;
-  var t=T[lang];
-  document.body.classList.toggle('lang-th',lang==='th');
-  document.documentElement.lang=lang;
-  document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); if(t[k]!==undefined) el.textContent=t[k]; });
-  document.querySelectorAll('[data-i18n-html]').forEach(function(el){ var k=el.getAttribute('data-i18n-html'); if(t[k]!==undefined) el.innerHTML=t[k]; });
-  heroFor(currentTab);
-  $('btnEn').classList.toggle('active',lang==='en');
-  $('btnTh').classList.toggle('active',lang==='th');
-  if(snap.usb) sheetUsb.set(calcUsb(snap.usb),true); else sheetUsb.updateHead();
-  if(snap.power) sheetPower.set(calcPower(snap.power),true); else sheetPower.updateHead();
-  if(snap.charger) sheetCharger.set(calcCharger(snap.charger),true); else sheetCharger.updateHead();
-  if(!$('helpPriceUsb').hidden) $('helpPriceUsb').textContent=t.errPrice;
-  if(!$('helpPricePower').hidden) $('helpPricePower').textContent=t.errPrice;
-  if(!$('helpPriceCharger').hidden) $('helpPriceCharger').textContent=t.errPrice;
-  refreshSelects();
-  document.querySelectorAll('details.is-open').forEach(stagger);
-}
-$('btnEn').addEventListener('click',function(){ applyLang('en'); });
-$('btnTh').addEventListener('click',function(){ applyLang('th'); });
-
-var HASH={'flash-drive':'usb','power-bank':'power','charger':'charger'};
-var HASHOF={usb:'flash-drive',power:'power-bank',charger:'charger'};
-function showTab(tab){
-  currentTab=tab;
-  var t=T[currentLang];
-  document.querySelectorAll('.tab').forEach(function(b){ b.setAttribute('aria-selected',String(b.getAttribute('data-tab')===tab)); });
-  closeAllSelects();
-  [['usb','panelUsb'],['power','panelPower'],['charger','panelCharger']].forEach(function(x){
-    var el=$(x[1]), on=tab===x[0]; el.hidden=!on; el.classList.toggle('active',on);
-  });
-  heroFor(tab);
-}
-document.querySelectorAll('.tab').forEach(function(b){
-  b.addEventListener('click',function(){
-    var tab=b.getAttribute('data-tab');
-    location.hash=HASHOF[tab];
-    showTab(tab);
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-});
-window.addEventListener('hashchange',function(){
-  var tab=HASH[location.hash.replace('#','')];
-  if(tab && tab!==currentTab) showTab(tab);
-});
-
-/* ---------------- first state: example listings, verdicts sealed ---------------- */
-applyLang('en');
-updateReg(); updateRegC();
-snap.usb=readUsb(); sheetUsb.set(calcUsb(snap.usb),false);
-snap.power=readPower(); sheetPower.set(calcPower(snap.power),false);
-snap.charger=readCharger(); sheetCharger.set(calcCharger(snap.charger),false);
-var startTab=HASH[location.hash.replace('#','')];
-if(startTab) showTab(startTab);
-
-})();
-</script>
+<script src="js/i18n.js"></script>
+<script src="js/prices.js"></script>
+<script src="js/app.js"></script>
 
 </body></html>
